@@ -24,6 +24,14 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// 创建一个服务作用域来取得 RoleManager 等 scoped 服务。
+// 应用启动时初始化系统基础角色，确保登录和授权页面可以立即使用这些角色。
+// DbInitializer 会先检查角色是否存在，因此重复启动不会创建重复数据，也不会覆盖已有角色。
+using (var scope = app.Services.CreateScope())
+{
+	await DbInitializer.SeedRolesAsync(scope.ServiceProvider);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

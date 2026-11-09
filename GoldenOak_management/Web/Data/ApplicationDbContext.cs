@@ -8,6 +8,7 @@ namespace Web.Data;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
 {
+    // 业务实体集合：EF Core 根据这些 DbSet 和实体配置生成对应数据库表。
     public DbSet<OwnerProfile> OwnerProfiles => Set<OwnerProfile>();
     public DbSet<RenterProfile> RenterProfiles => Set<RenterProfile>();
     public DbSet<PropertyManagerProfile> PropertyManagerProfiles => Set<PropertyManagerProfile>();
@@ -19,10 +20,15 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<UnitOwner> UnitOwners => Set<UnitOwner>();
     public DbSet<PropertyManagerAssignment> PropertyManagerAssignments => Set<PropertyManagerAssignment>();
 
+    /// <summary>
+    /// 配置 Identity 表名、业务表索引和外键关系。
+    /// 所有删除关系默认使用 Restrict，避免删除用户时级联删除财务或历史业务数据。
+    /// </summary>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
+        // Identity 表映射到数据库设计中的 users、roles 和关联表。
         builder.Entity<ApplicationUser>().ToTable("users");
         builder.Entity<ApplicationRole>().ToTable("roles");
         builder.Entity<IdentityUserRole<long>>().ToTable("user_roles");
@@ -33,9 +39,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         builder.Entity<ApplicationUser>().Property(x => x.Status).HasMaxLength(30).IsRequired();
 
+        // 一个用户最多对应一个同类型 profile，防止同一用户出现重复 profile。
         foreach (var entity in new[] { typeof(OwnerProfile), typeof(RenterProfile), typeof(PropertyManagerProfile), typeof(ContractorProfile), typeof(RealtorProfile), typeof(AdminProfile) })
             builder.Entity(entity).HasIndex("UserId").IsUnique();
 
+        // Profile 通过 user_id 关联 users。
+        // Restrict 表示删除用户前必须先处理 Profile，避免删除用户时级联删除 Profile。
+        // 删除 Profile 不会反向删除 users。
         builder.Entity<OwnerProfile>().HasOne(x => x.User).WithOne().HasForeignKey<OwnerProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<RenterProfile>().HasOne(x => x.User).WithOne().HasForeignKey<RenterProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<PropertyManagerProfile>().HasOne(x => x.User).WithOne().HasForeignKey<PropertyManagerProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
@@ -43,6 +53,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<RealtorProfile>().HasOne(x => x.User).WithOne().HasForeignKey<RealtorProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<AdminProfile>().HasOne(x => x.User).WithOne().HasForeignKey<AdminProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
 
+        // 房产关系：一栋 building 可以有多个 unit；同一栋楼内 unit_number 必须唯一。
         builder.Entity<Building>().HasMany(x => x.Units).WithOne(x => x.Building).HasForeignKey(x => x.BuildingId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<Unit>().HasIndex(x => new { x.BuildingId, x.UnitNumber }).IsUnique();
         builder.Entity<UnitOwner>().HasOne(x => x.Unit).WithMany().HasForeignKey(x => x.UnitId).OnDelete(DeleteBehavior.Restrict);
