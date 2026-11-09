@@ -54,14 +54,14 @@ public static class DbInitializer
 
     /// <summary>
     /// 创建本地演示用的物业经理账号和 Profile。
-    /// 只有在配置了 DemoSeed:Email 和 DemoSeed:Password 时才执行，避免把密码写入源代码。
+    /// 只有在配置了 DemoPropertyManager:Email 和 DemoPropertyManager:Password 时才执行，避免把密码写入源代码。
     /// </summary>
     public static async Task SeedDemoPropertyManagerAsync(
         IServiceProvider services,
         IConfiguration configuration)
     {
-        var email = configuration["DemoSeed:Email"];
-        var password = configuration["DemoSeed:Password"];
+        var email = configuration["DemoPropertyManager:Email"];
+        var password = configuration["DemoPropertyManager:Password"];
 
         // 没有配置演示账号时跳过，不影响正式环境启动。
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
