@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Web.Models;
 
 namespace Web.Data;
@@ -48,6 +49,63 @@ public static class DbInitializer
                     throw new InvalidOperationException($"Unable to create role '{roleName}': {errors}");
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// 创建本地演示用的物业经理账号和 Profile。
+    /// 只有在配置了 DemoSeed:Email 和 DemoSeed:Password 时才执行，避免把密码写入源代码。
+    /// </summary>
+    public static async Task SeedDemoPropertyManagerAsync(
+        IServiceProvider services,
+        IConfiguration configuration)
+    {
+        var email = configuration["DemoSeed:Email"];
+        var password = configuration["DemoSeed:Password"];
+
+        // 没有配置演示账号时跳过，不影响正式环境启动。
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            return;
+
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var user = await userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                Status = "ACTIVE"
+            };
+
+            var result = await userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(x => x.Description));
+                throw new InvalidOperationException($"Unable to create demo user: {errors}");
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(user, "PROPERTY_MANAGER"))
+            await userManager.AddToRoleAsync(user, "PROPERTY_MANAGER");
+
+        // 一个用户只建立一个 property_manager_profiles 记录。
+        if (!await db.PropertyManagerProfiles.AnyAsync(x => x.UserId == user.Id))
+        {
+            db.PropertyManagerProfiles.Add(new PropertyManagerProfile
+            {
+                UserId = user.Id,
+                FullName = "Demo Property Manager",
+                AverageRating = 0,
+                RatingCount = 0,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+
+            await db.SaveChangesAsync();
         }
     }
 }

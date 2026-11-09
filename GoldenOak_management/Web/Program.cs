@@ -30,6 +30,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
 	await DbInitializer.SeedRolesAsync(scope.ServiceProvider);
+	await DbInitializer.SeedDemoPropertyManagerAsync(scope.ServiceProvider, app.Configuration);
 }
 
 // Configure the HTTP request pipeline.
