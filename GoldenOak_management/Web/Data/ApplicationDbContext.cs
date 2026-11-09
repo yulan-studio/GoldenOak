@@ -1,0 +1,54 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Web.Models;
+
+namespace Web.Data;
+
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser, ApplicationRole, long>(options)
+{
+    public DbSet<OwnerProfile> OwnerProfiles => Set<OwnerProfile>();
+    public DbSet<RenterProfile> RenterProfiles => Set<RenterProfile>();
+    public DbSet<PropertyManagerProfile> PropertyManagerProfiles => Set<PropertyManagerProfile>();
+    public DbSet<ContractorProfile> ContractorProfiles => Set<ContractorProfile>();
+    public DbSet<RealtorProfile> RealtorProfiles => Set<RealtorProfile>();
+    public DbSet<AdminProfile> AdminProfiles => Set<AdminProfile>();
+    public DbSet<Building> Buildings => Set<Building>();
+    public DbSet<Unit> Units => Set<Unit>();
+    public DbSet<UnitOwner> UnitOwners => Set<UnitOwner>();
+    public DbSet<PropertyManagerAssignment> PropertyManagerAssignments => Set<PropertyManagerAssignment>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<ApplicationUser>().ToTable("users");
+        builder.Entity<ApplicationRole>().ToTable("roles");
+        builder.Entity<IdentityUserRole<long>>().ToTable("user_roles");
+        builder.Entity<IdentityUserClaim<long>>().ToTable("user_claims");
+        builder.Entity<IdentityUserLogin<long>>().ToTable("user_logins");
+        builder.Entity<IdentityRoleClaim<long>>().ToTable("role_claims");
+        builder.Entity<IdentityUserToken<long>>().ToTable("user_tokens");
+
+        builder.Entity<ApplicationUser>().Property(x => x.Status).HasMaxLength(30).IsRequired();
+
+        foreach (var entity in new[] { typeof(OwnerProfile), typeof(RenterProfile), typeof(PropertyManagerProfile), typeof(ContractorProfile), typeof(RealtorProfile), typeof(AdminProfile) })
+            builder.Entity(entity).HasIndex("UserId").IsUnique();
+
+        builder.Entity<OwnerProfile>().HasOne(x => x.User).WithOne().HasForeignKey<OwnerProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<RenterProfile>().HasOne(x => x.User).WithOne().HasForeignKey<RenterProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PropertyManagerProfile>().HasOne(x => x.User).WithOne().HasForeignKey<PropertyManagerProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<ContractorProfile>().HasOne(x => x.User).WithOne().HasForeignKey<ContractorProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<RealtorProfile>().HasOne(x => x.User).WithOne().HasForeignKey<RealtorProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<AdminProfile>().HasOne(x => x.User).WithOne().HasForeignKey<AdminProfile>(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Building>().HasMany(x => x.Units).WithOne(x => x.Building).HasForeignKey(x => x.BuildingId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<Unit>().HasIndex(x => new { x.BuildingId, x.UnitNumber }).IsUnique();
+        builder.Entity<UnitOwner>().HasOne(x => x.Unit).WithMany().HasForeignKey(x => x.UnitId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<UnitOwner>().HasOne(x => x.Owner).WithMany().HasForeignKey(x => x.OwnerId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PropertyManagerAssignment>().HasOne(x => x.PropertyManager).WithMany().HasForeignKey(x => x.PropertyManagerId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PropertyManagerAssignment>().HasOne(x => x.Building).WithMany().HasForeignKey(x => x.BuildingId).OnDelete(DeleteBehavior.Restrict);
+        builder.Entity<PropertyManagerAssignment>().HasOne(x => x.Unit).WithMany().HasForeignKey(x => x.UnitId).OnDelete(DeleteBehavior.Restrict);
+    }
+}

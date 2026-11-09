@@ -1,0 +1,164 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Web.Models;
+
+[Table("owner_profiles")]
+public class OwnerProfile
+{
+    [Key, Column("owner_profile_id")] public long OwnerProfileId { get; set; }
+    [Column("user_id")] public long UserId { get; set; }
+    [Required, MaxLength(200), Column("full_name")] public string FullName { get; set; } = null!;
+    [Required, MaxLength(30), Column("owner_type")] public string OwnerType { get; set; } = "INDIVIDUAL";
+    [MaxLength(500), Column("mailing_address")] public string? MailingAddress { get; set; }
+    [Required, MaxLength(30), Column("payout_preference")] public string PayoutPreference { get; set; } = "BANK_TRANSFER";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+}
+
+[Table("renter_profiles")]
+public class RenterProfile
+{
+    [Key, Column("renter_profile_id")] public long RenterProfileId { get; set; }
+    [Column("user_id")] public long UserId { get; set; }
+    [Required, MaxLength(150), Column("full_name")] public string FullName { get; set; } = null!;
+    [Column("date_of_birth")] public DateOnly? DateOfBirth { get; set; }
+    [MaxLength(150), Column("emergency_contact_name")] public string? EmergencyContactName { get; set; }
+    [MaxLength(30), Column("emergency_contact_phone")] public string? EmergencyContactPhone { get; set; }
+    [Column("archived_at")] public DateTime? ArchivedAt { get; set; }
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+}
+
+[Table("property_manager_profiles")]
+public class PropertyManagerProfile
+{
+    [Key, Column("property_manager_profile_id")] public long PropertyManagerProfileId { get; set; }
+    [Column("user_id")] public long UserId { get; set; }
+    [Required, MaxLength(150), Column("full_name")] public string FullName { get; set; } = null!;
+    [MaxLength(50), Column("employee_number")] public string? EmployeeNumber { get; set; }
+    [MaxLength(100), Column("department")] public string? Department { get; set; }
+    [MaxLength(100), Column("license_number")] public string? LicenseNumber { get; set; }
+    [Column("average_rating", TypeName = "decimal(3,2)")] public decimal AverageRating { get; set; }
+    [Column("rating_count")] public int RatingCount { get; set; }
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+}
+
+[Table("contractor_profiles")]
+public class ContractorProfile
+{
+    [Key, Column("contractor_profile_id")] public long ContractorProfileId { get; set; }
+    [Column("user_id")] public long UserId { get; set; }
+    [Required, MaxLength(150), Column("full_name")] public string FullName { get; set; } = null!;
+    [Required, MaxLength(50), Column("contractor_type")] public string ContractorType { get; set; } = "INDIVIDUAL";
+    [MaxLength(200), Column("company_name")] public string? CompanyName { get; set; }
+    [Required, MaxLength(100), Column("trade_type")] public string TradeType { get; set; } = null!;
+    [MaxLength(255), Column("service_area")] public string? ServiceArea { get; set; }
+    [Column("insurance_expiry_date")] public DateOnly? InsuranceExpiryDate { get; set; }
+    [MaxLength(100), Column("license_number")] public string? LicenseNumber { get; set; }
+    [Column("average_rating", TypeName = "decimal(3,2)")] public decimal AverageRating { get; set; }
+    [Column("rating_count")] public int RatingCount { get; set; }
+    [Required, MaxLength(30), Column("status")] public string Status { get; set; } = "ACTIVE";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+}
+
+[Table("realtor_profiles")]
+public class RealtorProfile
+{
+    [Key, Column("realtor_profile_id")] public long RealtorProfileId { get; set; }
+    [Column("user_id")] public long UserId { get; set; }
+    [Required, MaxLength(150), Column("full_name")] public string FullName { get; set; } = null!;
+    [MaxLength(200), Column("brokerage_name")] public string? BrokerageName { get; set; }
+    [MaxLength(100), Column("license_number")] public string? LicenseNumber { get; set; }
+    [MaxLength(255), Column("service_area")] public string? ServiceArea { get; set; }
+    [Column("average_rating", TypeName = "decimal(3,2)")] public decimal AverageRating { get; set; }
+    [Column("rating_count")] public int RatingCount { get; set; }
+    [Required, MaxLength(30), Column("status")] public string Status { get; set; } = "ACTIVE";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+}
+
+[Table("admin_profiles")]
+public class AdminProfile
+{
+    [Key, Column("admin_profile_id")] public long AdminProfileId { get; set; }
+    [Column("user_id")] public long UserId { get; set; }
+    [Required, MaxLength(150), Column("full_name")] public string FullName { get; set; } = null!;
+    [Required, MaxLength(50), Column("admin_scope")] public string AdminScope { get; set; } = "SYSTEM";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+}
+
+[Table("buildings")]
+public class Building
+{
+    [Key, Column("building_id")] public long BuildingId { get; set; }
+    [Required, MaxLength(200), Column("building_name")] public string BuildingName { get; set; } = null!;
+    [Required, MaxLength(255), Column("address_line1")] public string AddressLine1 { get; set; } = null!;
+    [MaxLength(255), Column("address_line2")] public string? AddressLine2 { get; set; }
+    [Required, MaxLength(100), Column("city")] public string City { get; set; } = null!;
+    [Required, MaxLength(100), Column("province")] public string Province { get; set; } = null!;
+    [Required, MaxLength(20), Column("postal_code")] public string PostalCode { get; set; } = null!;
+    [Required, MaxLength(50), Column("building_type")] public string BuildingType { get; set; } = "APARTMENT";
+    [Column("unit_count")] public int UnitCount { get; set; }
+    [Column("notes")] public string? Notes { get; set; }
+    [Required, MaxLength(20), Column("status")] public string Status { get; set; } = "ACTIVE";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public ICollection<Unit> Units { get; set; } = new List<Unit>();
+}
+
+[Table("units")]
+public class Unit
+{
+    [Key, Column("unit_id")] public long UnitId { get; set; }
+    [Column("building_id")] public long BuildingId { get; set; }
+    [Required, MaxLength(50), Column("unit_number")] public string UnitNumber { get; set; } = null!;
+    [Column("bedrooms", TypeName = "decimal(3,1)")] public decimal Bedrooms { get; set; }
+    [Column("bathrooms", TypeName = "decimal(3,1)")] public decimal Bathrooms { get; set; }
+    [Column("size_sqft", TypeName = "decimal(10,2)")] public decimal? SizeSqft { get; set; }
+    [Column("asking_rent", TypeName = "decimal(14,2)")] public decimal? AskingRent { get; set; }
+    [Required, MaxLength(20), Column("status")] public string Status { get; set; } = "AVAILABLE";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    public Building Building { get; set; } = null!;
+}
+
+[Table("unit_owners")]
+public class UnitOwner
+{
+    [Key, Column("unit_owner_id")] public long UnitOwnerId { get; set; }
+    [Column("unit_id")] public long UnitId { get; set; }
+    [Column("owner_id")] public long OwnerId { get; set; }
+    [Column("ownership_percentage", TypeName = "decimal(5,2)")] public decimal OwnershipPercentage { get; set; }
+    [Column("valid_from")] public DateOnly ValidFrom { get; set; }
+    [Column("valid_to")] public DateOnly? ValidTo { get; set; }
+    [Column("updated_at")] public DateTime UpdatedAt { get; set; }
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    public Unit Unit { get; set; } = null!;
+    public ApplicationUser Owner { get; set; } = null!;
+}
+
+[Table("property_manager_assignments")]
+public class PropertyManagerAssignment
+{
+    [Key, Column("assignment_id")] public long AssignmentId { get; set; }
+    [Column("property_manager_id")] public long PropertyManagerId { get; set; }
+    [Column("unit_id")] public long? UnitId { get; set; }
+    [Column("building_id")] public long BuildingId { get; set; }
+    [Column("assigned_from")] public DateOnly AssignedFrom { get; set; }
+    [Column("assigned_to")] public DateOnly? AssignedTo { get; set; }
+    [Required, MaxLength(20), Column("status")] public string Status { get; set; } = "ACTIVE";
+    [Column("created_at")] public DateTime CreatedAt { get; set; }
+    public ApplicationUser PropertyManager { get; set; } = null!;
+    public Building Building { get; set; } = null!;
+    public Unit? Unit { get; set; }
+}
