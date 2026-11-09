@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/GoldenOak_management/.vs/GoldenOak_management.slnx
+/GoldenOak_management/Web/obj
