@@ -6,8 +6,40 @@
 <div class="go-user-actions">
 @if (SignInManager.IsSignedIn(User))
 {
+    var userBadge = "U";
+    var userBadgeLabel = "User";
+    if (User.IsInRole("ADMIN"))
+    {
+        userBadge = "A";
+        userBadgeLabel = "Administrator";
+    }
+    else if (User.IsInRole("PROPERTY_MANAGER"))
+    {
+        userBadge = "PM";
+        userBadgeLabel = "Property Manager";
+    }
+    else if (User.IsInRole("OWNER"))
+    {
+        userBadge = "O";
+        userBadgeLabel = "Owner";
+    }
+    else if (User.IsInRole("RENTER"))
+    {
+        userBadge = "T";
+        userBadgeLabel = "Tenant";
+    }
+    else if (User.IsInRole("CONTRACTOR"))
+    {
+        userBadge = "C";
+        userBadgeLabel = "Contractor";
+    }
+    else if (User.IsInRole("REALTOR"))
+    {
+        userBadge = "R";
+        userBadgeLabel = "Realtor";
+    }
     <a class="go-user-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-        <span class="go-user-avatar" aria-label="Property Manager">PM</span>
+        <span class="go-user-avatar" aria-label="@userBadgeLabel">@userBadge</span>
         <span class="go-user-copy"><small>Hello</small><strong>@User.Identity?.Name</strong></span>
     </a>
     <form class="go-logout-form" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
