@@ -90,4 +90,10 @@
   <data name="Login"><value>Login</value></data>
   <data name="Register"><value>Register</value></data>
   <data name="ManageAccount"><value>Manage account</value></data>
+  <data name="AdminHome"><value>Administrator Home</value></data>
+  <data name="AdminWorkspace"><value>Administrator Workspace</value></data>
+  <data name="AdminShortcuts"><value>Administrator shortcuts</value></data>
+  <data name="AdminHomeDescription"><value>Manage users, buildings, units, and system-wide business data.</value></data>
+  <data name="PropertyManagerHome"><value>Property Manager Home</value></data>
+  <data name="PropertyManagerHomeDescription"><value>View assigned buildings, units, and current management status.</value></data>
 </root>

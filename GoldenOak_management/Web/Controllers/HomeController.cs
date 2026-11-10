@@ -17,8 +17,13 @@ namespace Web.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-			var viewModel = await _dashboardService.GetDashboardAsync(HttpContext.RequestAborted);
-			return View(viewModel);
+			if (User.IsInRole("ADMIN"))
+				return RedirectToAction("Index", "Admin");
+
+			if (User.IsInRole("PROPERTY_MANAGER"))
+				return RedirectToAction("Index", "PropertyManager");
+
+			return Forbid();
 		}
 
 		public IActionResult Privacy()

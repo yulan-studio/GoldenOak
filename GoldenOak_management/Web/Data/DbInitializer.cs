@@ -87,6 +87,8 @@ public static class DbInitializer
             }
         }
 
+        await EnsureDemoPasswordAsync(userManager, user, password);
+
         if (!await userManager.IsInRoleAsync(user, "ADMIN"))
             await userManager.AddToRoleAsync(user, "ADMIN");
     }
@@ -127,6 +129,8 @@ public static class DbInitializer
                 throw new InvalidOperationException($"Unable to create demo user: {errors}");
             }
         }
+
+        await EnsureDemoPasswordAsync(userManager, user, password);
 
         if (!await userManager.IsInRoleAsync(user, "PROPERTY_MANAGER"))
             await userManager.AddToRoleAsync(user, "PROPERTY_MANAGER");
@@ -256,7 +260,10 @@ public static class DbInitializer
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user is not null)
+        {
+            await EnsureDemoPasswordAsync(userManager, user, password);
             return user;
+        }
 
         user = new ApplicationUser
         {
@@ -269,6 +276,33 @@ public static class DbInitializer
         if (!result.Succeeded)
             throw new InvalidOperationException($"Unable to create demo user '{fullName}': {string.Join(", ", result.Errors.Select(x => x.Description))}");
         return user;
+    }
+
+    /// <summary>
+    /// 仅用于本地演示账号：如果已有账号使用旧密码，则同步为 DemoUser:Password。
+    /// 正式环境不应在应用启动时自动重置用户密码。
+    /// </summary>
+    private static async Task EnsureDemoPasswordAsync(
+        UserManager<ApplicationUser> userManager,
+        ApplicationUser user,
+        string password)
+    {
+        if (await userManager.CheckPasswordAsync(user, password))
+            return;
+
+        if (await userManager.HasPasswordAsync(user))
+        {
+            var removeResult = await userManager.RemovePasswordAsync(user);
+            if (!removeResult.Succeeded)
+                throw new InvalidOperationException("Unable to reset demo user password.");
+        }
+
+        var addResult = await userManager.AddPasswordAsync(user, password);
+        if (!addResult.Succeeded)
+        {
+            var errors = string.Join(", ", addResult.Errors.Select(x => x.Description));
+            throw new InvalidOperationException($"Unable to set demo user password: {errors}");
+        }
     }
 
     private static async Task<Building> GetOrCreateBuildingAsync(ApplicationDbContext db, string name, string address, string city, string province, string postalCode, int unitCount)

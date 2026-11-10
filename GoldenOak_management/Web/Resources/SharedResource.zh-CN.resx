@@ -90,4 +90,10 @@
   <data name="Login"><value>登录</value></data>
   <data name="Register"><value>注册</value></data>
   <data name="ManageAccount"><value>管理账户</value></data>
+  <data name="AdminHome"><value>管理员首页</value></data>
+  <data name="AdminWorkspace"><value>管理员工作区</value></data>
+  <data name="AdminShortcuts"><value>管理员快捷入口</value></data>
+  <data name="AdminHomeDescription"><value>管理系统用户、楼宇、单元和全局业务数据。</value></data>
+  <data name="PropertyManagerHome"><value>物业经理首页</value></data>
+  <data name="PropertyManagerHomeDescription"><value>查看所负责楼宇、单元和当前管理状态。</value></data>
 </root>
