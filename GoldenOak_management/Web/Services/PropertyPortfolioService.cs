@@ -59,7 +59,7 @@ public sealed class PropertyPortfolioService : IPropertyPortfolioService
                             join profile in _db.OwnerProfiles.AsNoTracking() on relation.OwnerId equals profile.UserId
                             join user in _db.Users.AsNoTracking() on profile.UserId equals user.Id
                             where relation.UnitId == unitId
-                            select new UnitOwnerSummary { UnitOwnerId = relation.UnitOwnerId, FullName = profile.FullName, Email = user.Email, OwnershipPercentage = relation.OwnershipPercentage, ValidFrom = relation.ValidFrom, ValidTo = relation.ValidTo }).ToListAsync(ct);
+                            select new UnitOwnerSummary { UnitOwnerId = relation.UnitOwnerId, FullName = profile.FullName, Email = user.Email, OwnershipPercentage = relation.OwnershipPercentage, IsPrimaryPayoutOwner = relation.IsPrimaryPayoutOwner, ValidFrom = relation.ValidFrom, ValidTo = relation.ValidTo }).ToListAsync(ct);
         return new UnitOwnerViewModel { UnitId = unitId, BuildingId = unit.BuildingId, UnitNumber = unit.UnitNumber, BuildingName = building.BuildingName, Owners = owners };
     }
 
@@ -94,8 +94,10 @@ public sealed class PropertyPortfolioService : IPropertyPortfolioService
         var result = await _userManager.CreateAsync(user);
         if (!result.Succeeded) return false;
 
-        _db.OwnerProfiles.Add(new OwnerProfile { UserId = user.Id, FullName = model.FullName, MailingAddress = model.MailingAddress, PayoutPreference = model.PayoutPreference, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
-        _db.UnitOwners.Add(new UnitOwner { UnitId = model.UnitId, OwnerId = user.Id, OwnershipPercentage = model.OwnershipPercentage, ValidFrom = model.ValidFrom, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
+        _db.OwnerProfiles.Add(new OwnerProfile { UserId = user.Id, FullName = model.FullName, MailingAddress = model.MailingAddress, PayoutPreference = model.PayoutPreference, AccountHolderName = model.AccountHolderName, BankName = model.BankName, AccountLastFour = model.AccountLastFour, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
+        if (model.IsPrimaryPayoutOwner)
+            await ClearPrimaryPayoutOwnerAsync(model.UnitId, ct);
+        _db.UnitOwners.Add(new UnitOwner { UnitId = model.UnitId, OwnerId = user.Id, OwnershipPercentage = model.OwnershipPercentage, IsPrimaryPayoutOwner = model.IsPrimaryPayoutOwner, ValidFrom = model.ValidFrom, CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow });
         await _db.SaveChangesAsync(ct);
         return true;
     }
@@ -108,7 +110,7 @@ public sealed class PropertyPortfolioService : IPropertyPortfolioService
         var profile = await _db.OwnerProfiles.AsNoTracking().FirstOrDefaultAsync(x => x.UserId == relation.OwnerId, ct);
         var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == relation.OwnerId, ct);
         if (unit is null || profile is null || user is null) return null;
-        return new EditOwnerForUnitViewModel { UnitOwnerId = unitOwnerId, UnitId = unit.UnitId, BuildingName = unit.Building.BuildingName, UnitNumber = unit.UnitNumber, FullName = profile.FullName, Email = user.Email ?? string.Empty, PhoneNumber = user.PhoneNumber, MailingAddress = profile.MailingAddress, OwnershipPercentage = relation.OwnershipPercentage, ValidFrom = relation.ValidFrom, PayoutPreference = profile.PayoutPreference };
+        return new EditOwnerForUnitViewModel { UnitOwnerId = unitOwnerId, UnitId = unit.UnitId, BuildingName = unit.Building.BuildingName, UnitNumber = unit.UnitNumber, FullName = profile.FullName, Email = user.Email ?? string.Empty, PhoneNumber = user.PhoneNumber, MailingAddress = profile.MailingAddress, OwnershipPercentage = relation.OwnershipPercentage, IsPrimaryPayoutOwner = relation.IsPrimaryPayoutOwner, ValidFrom = relation.ValidFrom, PayoutPreference = profile.PayoutPreference, AccountHolderName = profile.AccountHolderName, BankName = profile.BankName, AccountLastFour = profile.AccountLastFour };
     }
 
     public async Task<bool> UpdateOwnerForUnitAsync(EditOwnerForUnitViewModel model, CancellationToken ct = default)
@@ -124,9 +126,17 @@ public sealed class PropertyPortfolioService : IPropertyPortfolioService
         user.Email = model.Email; user.UserName = model.Email; user.PhoneNumber = model.PhoneNumber;
         var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded) return false;
-        profile.FullName = model.FullName; profile.MailingAddress = model.MailingAddress; profile.PayoutPreference = model.PayoutPreference; profile.UpdatedAt = DateTime.UtcNow;
-        relation.OwnershipPercentage = model.OwnershipPercentage; relation.ValidFrom = model.ValidFrom; relation.UpdatedAt = DateTime.UtcNow;
+        profile.FullName = model.FullName; profile.MailingAddress = model.MailingAddress; profile.PayoutPreference = model.PayoutPreference; profile.AccountHolderName = model.AccountHolderName; profile.BankName = model.BankName; profile.AccountLastFour = model.AccountLastFour; profile.UpdatedAt = DateTime.UtcNow;
+        if (model.IsPrimaryPayoutOwner && !relation.IsPrimaryPayoutOwner)
+            await ClearPrimaryPayoutOwnerAsync(model.UnitId, ct, model.UnitOwnerId);
+        relation.IsPrimaryPayoutOwner = model.IsPrimaryPayoutOwner; relation.OwnershipPercentage = model.OwnershipPercentage; relation.ValidFrom = model.ValidFrom; relation.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct); return true;
+    }
+
+    private async Task ClearPrimaryPayoutOwnerAsync(long unitId, CancellationToken ct, long? exceptUnitOwnerId = null)
+    {
+        var current = await _db.UnitOwners.Where(x => x.UnitId == unitId && x.IsPrimaryPayoutOwner && (!exceptUnitOwnerId.HasValue || x.UnitOwnerId != exceptUnitOwnerId.Value)).ToListAsync(ct);
+        foreach (var relation in current) relation.IsPrimaryPayoutOwner = false;
     }
 
     public async Task<IReadOnlyList<OwnerSearchResult>> SearchOwnersAsync(long unitId, string term, CancellationToken ct = default)

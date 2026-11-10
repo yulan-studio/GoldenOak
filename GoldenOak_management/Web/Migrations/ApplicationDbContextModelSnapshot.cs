@@ -167,7 +167,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("admin_profiles");
+                    b.ToTable("admin_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.ApplicationRole", b =>
@@ -348,7 +348,7 @@ namespace Web.Migrations
 
                     b.HasKey("BuildingId");
 
-                    b.ToTable("buildings");
+                    b.ToTable("buildings", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.ContractorProfile", b =>
@@ -428,7 +428,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("contractor_profiles");
+                    b.ToTable("contractor_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.OwnerProfile", b =>
@@ -443,6 +443,21 @@ namespace Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
+
+                    b.Property<string>("AccountHolderName")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("account_holder_name");
+
+                    b.Property<string>("AccountLastFour")
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)")
+                        .HasColumnName("account_last_four");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)")
+                        .HasColumnName("bank_name");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -480,7 +495,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("owner_profiles");
+                    b.ToTable("owner_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.PropertyManagerAssignment", b =>
@@ -530,7 +545,7 @@ namespace Web.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("property_manager_assignments");
+                    b.ToTable("property_manager_assignments", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.PropertyManagerProfile", b =>
@@ -588,7 +603,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("property_manager_profiles");
+                    b.ToTable("property_manager_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.RealtorProfile", b =>
@@ -652,7 +667,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("realtor_profiles");
+                    b.ToTable("realtor_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.RenterProfile", b =>
@@ -705,7 +720,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("renter_profiles");
+                    b.ToTable("renter_profiles", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.Unit", b =>
@@ -762,7 +777,7 @@ namespace Web.Migrations
                     b.HasIndex("BuildingId", "UnitNumber")
                         .IsUnique();
 
-                    b.ToTable("units");
+                    b.ToTable("units", (string)null);
                 });
 
             modelBuilder.Entity("Web.Models.UnitOwner", b =>
@@ -777,6 +792,10 @@ namespace Web.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at");
+
+                    b.Property<bool>("IsPrimaryPayoutOwner")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_primary_payout_owner");
 
                     b.Property<long>("OwnerId")
                         .HasColumnType("bigint")
@@ -808,7 +827,7 @@ namespace Web.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("unit_owners");
+                    b.ToTable("unit_owners", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
