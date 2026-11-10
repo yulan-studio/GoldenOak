@@ -51,6 +51,7 @@ using (var scope = app.Services.CreateScope())
 {
 	await DbInitializer.SeedRolesAsync(scope.ServiceProvider);
 	await DbInitializer.SeedDemoPropertyManagerAsync(scope.ServiceProvider, app.Configuration);
+	await DbInitializer.SeedDemoPortfolioAsync(scope.ServiceProvider, app.Configuration);
 }
 
 // Configure the HTTP request pipeline.

@@ -108,4 +108,172 @@ public static class DbInitializer
             await db.SaveChangesAsync();
         }
     }
+
+    /// <summary>
+    /// 创建 Phase 1 演示组合：业主、租客、楼宇、单元、产权关系和物业经理分配。
+    /// 所有记录都使用稳定的邮箱和楼宇名称作为幂等判断，应用重复启动不会重复插入。
+    /// </summary>
+    public static async Task SeedDemoPortfolioAsync(
+        IServiceProvider services,
+        IConfiguration configuration)
+    {
+        var managerEmail = configuration["DemoPropertyManager:Email"];
+        var demoPassword = configuration["DemoPropertyManager:Password"];
+        if (string.IsNullOrWhiteSpace(managerEmail) || string.IsNullOrWhiteSpace(demoPassword))
+            return;
+
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var db = services.GetRequiredService<ApplicationDbContext>();
+        var manager = await userManager.FindByEmailAsync(managerEmail);
+        if (manager is null)
+            return;
+
+        var owner = await GetOrCreateUserAsync(userManager, "owner@goldenoak.com", "Demo Owner", demoPassword);
+        var renter = await GetOrCreateUserAsync(userManager, "renter@goldenoak.com", "Demo Renter", demoPassword);
+        if (!await userManager.IsInRoleAsync(owner, "OWNER"))
+            await userManager.AddToRoleAsync(owner, "OWNER");
+        if (!await userManager.IsInRoleAsync(renter, "RENTER"))
+            await userManager.AddToRoleAsync(renter, "RENTER");
+
+        if (!await db.OwnerProfiles.AnyAsync(x => x.UserId == owner.Id))
+        {
+            db.OwnerProfiles.Add(new OwnerProfile
+            {
+                UserId = owner.Id,
+                FullName = "Alex Morgan",
+                OwnerType = "INDIVIDUAL",
+                MailingAddress = "100 King Street West, Toronto, ON",
+                PayoutPreference = "BANK_TRANSFER",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+        }
+
+        if (!await db.RenterProfiles.AnyAsync(x => x.UserId == renter.Id))
+        {
+            db.RenterProfiles.Add(new RenterProfile
+            {
+                UserId = renter.Id,
+                FullName = "Jordan Lee",
+                EmergencyContactName = "Taylor Lee",
+                EmergencyContactPhone = "416-555-0148",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            });
+        }
+
+        await db.SaveChangesAsync();
+
+        var king = await GetOrCreateBuildingAsync(db, "100 King Street West", "100 King Street West", "Toronto", "ON", "M5X 1A9", 2);
+        var oak = await GetOrCreateBuildingAsync(db, "28 Oak Avenue", "28 Oak Avenue", "Toronto", "ON", "M4C 1A1", 2);
+
+        await GetOrCreateUnitAsync(db, king.BuildingId, "1204", 2, 2, 2450, "OCCUPIED");
+        await GetOrCreateUnitAsync(db, king.BuildingId, "1502", 1, 1, 2150, "AVAILABLE");
+        await GetOrCreateUnitAsync(db, oak.BuildingId, "304", 2, 1, 2180, "OCCUPIED");
+        await GetOrCreateUnitAsync(db, oak.BuildingId, "410", 1, 1, 1950, "UNAVAILABLE");
+        await db.SaveChangesAsync();
+
+        var units = await db.Units.Where(x => x.BuildingId == king.BuildingId || x.BuildingId == oak.BuildingId).ToListAsync();
+        foreach (var unit in units)
+        {
+            if (!await db.UnitOwners.AnyAsync(x => x.UnitId == unit.UnitId && x.OwnerId == owner.Id))
+            {
+                db.UnitOwners.Add(new UnitOwner
+                {
+                    UnitId = unit.UnitId,
+                    OwnerId = owner.Id,
+                    OwnershipPercentage = 100,
+                    ValidFrom = new DateOnly(DateTime.UtcNow.Year, 1, 1),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                });
+            }
+
+        }
+
+        foreach (var buildingId in units.Select(x => x.BuildingId).Distinct())
+        {
+            if (!await db.PropertyManagerAssignments.AnyAsync(x => x.BuildingId == buildingId && x.PropertyManagerId == manager.Id && x.UnitId == null))
+            {
+                db.PropertyManagerAssignments.Add(new PropertyManagerAssignment
+                {
+                    PropertyManagerId = manager.Id,
+                    BuildingId = buildingId,
+                    AssignedFrom = new DateOnly(DateTime.UtcNow.Year, 1, 1),
+                    Status = "ACTIVE",
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+        }
+
+        await db.SaveChangesAsync();
+    }
+
+    private static async Task<ApplicationUser> GetOrCreateUserAsync(
+        UserManager<ApplicationUser> userManager,
+        string email,
+        string fullName,
+        string password)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is not null)
+            return user;
+
+        user = new ApplicationUser
+        {
+            UserName = email,
+            Email = email,
+            EmailConfirmed = true,
+            Status = "ACTIVE"
+        };
+        var result = await userManager.CreateAsync(user, password);
+        if (!result.Succeeded)
+            throw new InvalidOperationException($"Unable to create demo user '{fullName}': {string.Join(", ", result.Errors.Select(x => x.Description))}");
+        return user;
+    }
+
+    private static async Task<Building> GetOrCreateBuildingAsync(ApplicationDbContext db, string name, string address, string city, string province, string postalCode, int unitCount)
+    {
+        var building = await db.Buildings.FirstOrDefaultAsync(x => x.BuildingName == name);
+        if (building is not null)
+            return building;
+
+        building = new Building
+        {
+            BuildingName = name,
+            AddressLine1 = address,
+            City = city,
+            Province = province,
+            PostalCode = postalCode,
+            BuildingType = "APARTMENT",
+            UnitCount = unitCount,
+            Status = "ACTIVE",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        db.Buildings.Add(building);
+        await db.SaveChangesAsync();
+        return building;
+    }
+
+    private static async Task<Unit> GetOrCreateUnitAsync(ApplicationDbContext db, long buildingId, string number, decimal bedrooms, decimal bathrooms, decimal rent, string status)
+    {
+        var unit = await db.Units.FirstOrDefaultAsync(x => x.BuildingId == buildingId && x.UnitNumber == number);
+        if (unit is not null)
+            return unit;
+
+        unit = new Unit
+        {
+            BuildingId = buildingId,
+            UnitNumber = number,
+            Bedrooms = bedrooms,
+            Bathrooms = bathrooms,
+            AskingRent = rent,
+            Status = status,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        db.Units.Add(unit);
+        return unit;
+    }
 }
