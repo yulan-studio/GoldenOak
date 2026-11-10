@@ -2,14 +2,23 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Localization;
 using System.Diagnostics;
 using Web.Models;
+using Web.Services;
 
 namespace Web.Controllers
 {
 	public class HomeController : Controller
 	{
-		public IActionResult Index()
+		private readonly IPropertyManagerDashboardService _dashboardService;
+
+		public HomeController(IPropertyManagerDashboardService dashboardService)
 		{
-			return View();
+			_dashboardService = dashboardService;
+		}
+
+		public async Task<IActionResult> Index()
+		{
+			var viewModel = await _dashboardService.GetDashboardAsync(HttpContext.RequestAborted);
+			return View(viewModel);
 		}
 
 		public IActionResult Privacy()

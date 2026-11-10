@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 using Web.Data;
 using Web.Models;
+using Web.Services;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddControllersWithViews()
 	.AddViewLocalization()
 	.AddDataAnnotationsLocalization();
+
+// 注册业务服务。Controller 通过接口调用业务逻辑，不直接访问数据库。
+builder.Services.AddScoped<IPropertyManagerDashboardService, PropertyManagerDashboardService>();
 
 var app = builder.Build();
 
