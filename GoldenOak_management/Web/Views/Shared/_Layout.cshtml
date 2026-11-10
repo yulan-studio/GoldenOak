@@ -1,48 +1,61 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Web</title>
+    <title>@ViewData["Title"] - Golden Oak</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Web.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+    <div class="go-app-shell">
+        <aside class="go-sidebar">
+            <a class="go-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <span class="go-brand-mark">✦</span>
+                <span><strong>Golden Oak</strong><small>Asset Management</small></span>
+            </a>
+
+            <div class="go-nav-label">Workspace</div>
+            <nav class="go-nav" aria-label="Main navigation">
+                <a class="go-nav-item active" asp-area="" asp-controller="Home" asp-action="Index"><span>⌂</span>总览 Dashboard</a>
+                <a class="go-nav-item" asp-area="" asp-controller="Home" asp-action="Privacy"><span>▦</span>房产与租约</a>
+                <a class="go-nav-item" href="#"><span>◈</span>租金与 Trust Ledger</a>
+                <a class="go-nav-item" href="#"><span>⚒</span>维修工单</a>
+                <a class="go-nav-item" href="#"><span>⌂</span>出租流程</a>
+                <a class="go-nav-item" href="#"><span>▤</span>报表中心</a>
+            </nav>
+
+            <div class="go-nav-label">Governance</div>
+            <nav class="go-nav">
+                <a class="go-nav-item" href="#"><span>◉</span>用户与权限</a>
+                <a class="go-nav-item" href="#"><span>◇</span>数据库设计</a>
+            </nav>
+
+            <div class="go-sidebar-footer">Phase 1 MVP · RBAC + Trust Ledger<br />Canadian privacy ready</div>
+        </aside>
+
+        <div class="go-main-shell">
+            <header class="go-topbar">
+                <div class="go-breadcrumb">Golden Oak Portal <span>/</span> <strong>@ViewData["Title"]</strong></div>
+                <div class="go-topbar-actions">
+                    <span class="go-role-badge">当前角色：@(User.Identity?.IsAuthenticated == true ? "已登录用户" : "访客")</span>
                     <partial name="_LoginPartial" />
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+            </header>
+
+            <main class="go-content" role="main">
+                @RenderBody()
+            </main>
+
+            <footer class="go-footer">
+                <span>© 2026 Golden Oak Asset Management</span>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </footer>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

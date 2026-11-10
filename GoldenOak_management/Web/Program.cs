@@ -46,8 +46,13 @@ else
 }
 
 app.UseHttpsRedirection();
+// 启用 wwwroot 下的 CSS、JavaScript 和图片等静态资源。
+// 如果缺少这一行，页面 HTML 可以正常显示，但 site.css 不会被浏览器加载。
+app.UseStaticFiles();
 app.UseRouting();
 
+// Identity 登录状态必须在授权检查之前恢复。
+app.UseAuthentication();
 app.UseAuthorization();
 
 
