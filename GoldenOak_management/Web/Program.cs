@@ -55,6 +55,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 using (var scope = app.Services.CreateScope())
 {
 	await DbInitializer.SeedRolesAsync(scope.ServiceProvider);
+	await DbInitializer.SeedDemoAdministratorAsync(scope.ServiceProvider, app.Configuration);
 	await DbInitializer.SeedDemoPropertyManagerAsync(scope.ServiceProvider, app.Configuration);
 	await DbInitializer.SeedDemoPortfolioAsync(scope.ServiceProvider, app.Configuration);
 }

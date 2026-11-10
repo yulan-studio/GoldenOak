@@ -53,15 +53,54 @@ public static class DbInitializer
     }
 
     /// <summary>
+    /// 创建本地演示用的管理员账号，并确保该账号拥有 ADMIN 角色。
+    /// 邮箱通过各自的配置提供，密码统一使用 DemoUser:Password，不写入源代码。
+    /// </summary>
+    public static async Task SeedDemoAdministratorAsync(
+        IServiceProvider services,
+        IConfiguration configuration)
+    {
+        var email = configuration["DemoAdministrator:Email"];
+        var password = configuration["DemoUser:Password"];
+
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            return;
+
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            user = new ApplicationUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                Status = "ACTIVE"
+            };
+
+            var result = await userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(x => x.Description));
+                throw new InvalidOperationException($"Unable to create demo administrator: {errors}");
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(user, "ADMIN"))
+            await userManager.AddToRoleAsync(user, "ADMIN");
+    }
+
+    /// <summary>
     /// 创建本地演示用的物业经理账号和 Profile。
-    /// 只有在配置了 DemoPropertyManager:Email 和 DemoPropertyManager:Password 时才执行，避免把密码写入源代码。
+    /// 只有在配置了 DemoPropertyManager:Email 和 DemoUser:Password 时才执行，避免把密码写入源代码。
     /// </summary>
     public static async Task SeedDemoPropertyManagerAsync(
         IServiceProvider services,
         IConfiguration configuration)
     {
         var email = configuration["DemoPropertyManager:Email"];
-        var password = configuration["DemoPropertyManager:Password"];
+        var password = configuration["DemoUser:Password"];
 
         // 没有配置演示账号时跳过，不影响正式环境启动。
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
@@ -118,7 +157,7 @@ public static class DbInitializer
         IConfiguration configuration)
     {
         var managerEmail = configuration["DemoPropertyManager:Email"];
-        var demoPassword = configuration["DemoPropertyManager:Password"];
+        var demoPassword = configuration["DemoUser:Password"];
         if (string.IsNullOrWhiteSpace(managerEmail) || string.IsNullOrWhiteSpace(demoPassword))
             return;
 
