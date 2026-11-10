@@ -92,6 +92,7 @@ button, input, select, textarea { font: inherit; }
 
 /* Global page building blocks for all future MVC views. */
 .go-page-header { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.go-header-actions { display: flex; align-items: center; gap: 10px; }
 .go-eyebrow { color: var(--go-green-2); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 .go-page-title { margin: 7px 0 4px; color: var(--go-ink); font-size: 30px; font-weight: 750; letter-spacing: -.7px; }
 .go-page-subtitle { color: var(--go-muted); font-size: 14px; }
@@ -99,12 +100,21 @@ button, input, select, textarea { font: inherit; }
 .go-card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-bottom: 22px; }
 .go-panel-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
 .go-panel-title { margin: 0 0 16px; font-size: 15px; font-weight: 700; }
-.go-btn-primary { padding: 11px 15px; color: #fff; background: var(--go-green); border: 0; border-radius: 7px; font-weight: 650; }
+.go-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 42px; padding: 0 15px; color: #fff; background: var(--go-green); border: 0; border-radius: 7px; font-weight: 650; line-height: 1; text-decoration: none; }
 .go-btn-primary:hover { color: #fff; background: var(--go-green-2); }
-.go-btn-secondary { padding: 10px 14px; color: var(--go-green); background: #fff; border: 1px solid var(--go-line); border-radius: 7px; font-weight: 650; }
+.go-btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 42px; padding: 0 15px; color: var(--go-green); background: #e4f3eb; border: 1px solid #c6e5d5; border-radius: 7px; font-weight: 650; line-height: 1; text-decoration: none; }
+.go-btn-secondary:hover { color: var(--go-green); background: #d4ecdf; }
+.go-btn-back { display: inline-flex; align-items: center; justify-content: center; height: 42px; padding: 0 15px; color: var(--go-green); background: #e4f3eb; border: 1px solid #c6e5d5; border-radius: 7px; font-weight: 650; line-height: 1; text-decoration: none; }
+.go-btn-back:hover { color: var(--go-green); background: #d4ecdf; }
 .go-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .go-table th { padding: 10px 8px; color: var(--go-muted); border-bottom: 1px solid var(--go-line); font-size: 11px; font-weight: 650; text-align: left; }
 .go-table td { padding: 13px 8px; border-bottom: 1px solid #eef1ef; vertical-align: middle; }
+.go-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.go-link-button { padding: 0; color: var(--go-red); background: transparent; border: 0; font: inherit; cursor: pointer; }
+.go-form { max-width: 920px; }
+.go-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.go-form-grid label { display: block; margin-bottom: 6px; color: var(--go-muted); font-size: 12px; font-weight: 650; }
+.go-form-actions { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
 .go-status { display: inline-flex; padding: 4px 8px; border-radius: 20px; font-size: 11px; font-weight: 650; }
 .go-status-success { color: #237255; background: #e4f3eb; }
 .go-status-warning { color: #986817; background: #fff3d9; }
@@ -130,11 +140,13 @@ button, input, select, textarea { font: inherit; }
   .go-user-copy { display: none; }
   .go-user-actions { padding-left: 8px; gap: 6px; }
   .go-page-header { align-items: start; flex-direction: column; }
+  .go-header-actions { flex-wrap: wrap; }
   .go-card-grid, .go-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 620px) {
   .go-card-grid, .go-panel-grid { grid-template-columns: 1fr; }
+  .go-form-grid { grid-template-columns: 1fr; }
   .go-topbar { min-height: 60px; }
   .go-breadcrumb { font-size: 12px; }
   .go-footer { padding: 16px 18px; }

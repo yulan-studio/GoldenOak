@@ -1,0 +1,5 @@
+@model IReadOnlyList<Web.Models.Building>
+@{ ViewData["Title"] = "楼宇"; }
+<div class="go-page-header"><div><div class="go-eyebrow">Property portfolio</div><h1 class="go-page-title">楼宇</h1><div class="go-page-subtitle">管理楼宇和单元。</div></div><a class="go-btn-primary" asp-action="Create">＋ 新增楼宇</a></div>
+@if (TempData["Error"] is not null) { <div class="alert alert-warning">@TempData["Error"]</div> }
+<section class="go-panel"><div class="table-responsive"><table class="go-table"><thead><tr><th>楼宇</th><th>地址</th><th>类型</th><th>单元数</th><th>状态</th><th>操作</th></tr></thead><tbody>@foreach (var b in Model) { <tr><td><strong>@b.BuildingName</strong></td><td>@b.AddressLine1, @b.City, @b.Province</td><td>@b.BuildingType</td><td>@b.Units.Count</td><td><span class="go-status go-status-success">@b.Status</span></td><td class="go-actions"><a asp-action="Units" asp-route-id="@b.BuildingId">单元</a><a asp-action="Edit" asp-route-id="@b.BuildingId">编辑</a><a asp-action="Delete" asp-route-id="@b.BuildingId">删除</a></td></tr> }</tbody></table></div></section>
