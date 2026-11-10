@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 using Web.Data;
 using Web.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Enable shared English/Chinese UI localization.
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -20,9 +25,24 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
 	.AddRoles<ApplicationRole>()
 	.AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+	.AddViewLocalization()
+	.AddDataAnnotationsLocalization();
 
 var app = builder.Build();
+
+var supportedCultures = new[] { new CultureInfo("zh-CN"), new CultureInfo("en-US") };
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+	DefaultRequestCulture = new RequestCulture("zh-CN"),
+	SupportedCultures = supportedCultures,
+	SupportedUICultures = supportedCultures,
+	RequestCultureProviders = new RequestCultureProvider[]
+	{
+		new CookieRequestCultureProvider(),
+		new AcceptLanguageHeaderRequestCultureProvider()
+	}
+});
 
 // 创建一个服务作用域来取得 RoleManager 等 scoped 服务。
 // 应用启动时初始化系统基础角色，确保登录和授权页面可以立即使用这些角色。

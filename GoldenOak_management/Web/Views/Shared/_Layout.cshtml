@@ -1,5 +1,8 @@
+@using Microsoft.Extensions.Localization
+@using Web
+@inject IStringLocalizer<SharedResource> L
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="@(System.Globalization.CultureInfo.CurrentUICulture.Name)">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,20 +20,20 @@
                 <span><strong>Golden Oak</strong><small>Asset Management</small></span>
             </a>
 
-            <div class="go-nav-label">Workspace</div>
+            <div class="go-nav-label">@L["Workspace"]</div>
             <nav class="go-nav" aria-label="Main navigation">
-                <a class="go-nav-item active" asp-area="" asp-controller="Home" asp-action="Index"><span>⌂</span>总览 Dashboard</a>
-                <a class="go-nav-item" asp-area="" asp-controller="Home" asp-action="Privacy"><span>▦</span>房产与租约</a>
-                <a class="go-nav-item" href="#"><span>◈</span>租金与 Trust Ledger</a>
-                <a class="go-nav-item" href="#"><span>⚒</span>维修工单</a>
-                <a class="go-nav-item" href="#"><span>⌂</span>出租流程</a>
-                <a class="go-nav-item" href="#"><span>▤</span>报表中心</a>
+                <a class="go-nav-item active" asp-area="" asp-controller="Home" asp-action="Index"><span>⌂</span>@L["Dashboard"]</a>
+                <a class="go-nav-item" asp-area="" asp-controller="Home" asp-action="Privacy"><span>▦</span>@L["PropertiesAndLeases"]</a>
+                <a class="go-nav-item" href="#"><span>◈</span>@L["RentAndTrustLedger"]</a>
+                <a class="go-nav-item" href="#"><span>⚒</span>@L["Maintenance"]</a>
+                <a class="go-nav-item" href="#"><span>⌂</span>@L["Leasing"]</a>
+                <a class="go-nav-item" href="#"><span>▤</span>@L["Reports"]</a>
             </nav>
 
-            <div class="go-nav-label">Governance</div>
+            <div class="go-nav-label">@L["Governance"]</div>
             <nav class="go-nav">
-                <a class="go-nav-item" href="#"><span>◉</span>用户与权限</a>
-                <a class="go-nav-item" href="#"><span>◇</span>数据库设计</a>
+                <a class="go-nav-item" href="#"><span>◉</span>@L["UsersAndPermissions"]</a>
+                <a class="go-nav-item" href="#"><span>◇</span>@L["DatabaseDesign"]</a>
             </nav>
 
             <div class="go-sidebar-footer">Phase 1 MVP · RBAC + Trust Ledger<br />Canadian privacy ready</div>
@@ -40,7 +43,14 @@
             <header class="go-topbar">
                 <div class="go-breadcrumb">Golden Oak Portal <span>/</span> <strong>@ViewData["Title"]</strong></div>
                 <div class="go-topbar-actions">
-                    <span class="go-role-badge">当前角色：@(User.Identity?.IsAuthenticated == true ? "已登录用户" : "访客")</span>
+                    <form asp-controller="Home" asp-action="SetLanguage" method="post" class="go-language-switcher">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                        <select name="culture" aria-label="@L["Language"]" onchange="this.form.submit()">
+                            <option value="zh-CN" selected="@(System.Globalization.CultureInfo.CurrentUICulture.Name == "zh-CN")">@L["Chinese"]</option>
+                            <option value="en-US" selected="@(System.Globalization.CultureInfo.CurrentUICulture.Name == "en-US")">@L["English"]</option>
+                        </select>
+                    </form>
                     <partial name="_LoginPartial" />
                 </div>
             </header>
@@ -51,7 +61,7 @@
 
             <footer class="go-footer">
                 <span>© 2026 Golden Oak Asset Management</span>
-                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Privacy"]</a>
             </footer>
         </div>
     </div>

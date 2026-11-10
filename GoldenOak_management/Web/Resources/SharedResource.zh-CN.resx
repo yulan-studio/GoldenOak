@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+  <data name="Workspace"><value>工作区</value></data>
+  <data name="Dashboard"><value>总览</value></data>
+  <data name="PropertiesAndLeases"><value>房产与租约</value></data>
+  <data name="RentAndTrustLedger"><value>租金与 Trust Ledger</value></data>
+  <data name="Maintenance"><value>维修工单</value></data>
+  <data name="Leasing"><value>出租流程</value></data>
+  <data name="Reports"><value>报表中心</value></data>
+  <data name="Governance"><value>治理</value></data>
+  <data name="UsersAndPermissions"><value>用户与权限</value></data>
+  <data name="DatabaseDesign"><value>数据库设计</value></data>
+  <data name="Visitor"><value>访客</value></data>
+  <data name="LoggedInUser"><value>已登录用户</value></data>
+  <data name="Privacy"><value>隐私</value></data>
+  <data name="Language"><value>语言</value></data>
+  <data name="English"><value>English</value></data>
+  <data name="Chinese"><value>中文</value></data>
+  <data name="Overview"><value>总览</value></data>
+</root>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+  <data name="Workspace"><value>Workspace</value></data>
+  <data name="Dashboard"><value>Dashboard</value></data>
+  <data name="PropertiesAndLeases"><value>Properties &amp; Leases</value></data>
+  <data name="RentAndTrustLedger"><value>Rent &amp; Trust Ledger</value></data>
+  <data name="Maintenance"><value>Maintenance</value></data>
+  <data name="Leasing"><value>Leasing</value></data>
+  <data name="Reports"><value>Reports</value></data>
+  <data name="Governance"><value>Governance</value></data>
+  <data name="UsersAndPermissions"><value>Users &amp; Permissions</value></data>
+  <data name="DatabaseDesign"><value>Database Design</value></data>
+  <data name="Visitor"><value>Visitor</value></data>
+  <data name="LoggedInUser"><value>Signed-in user</value></data>
+  <data name="Privacy"><value>Privacy</value></data>
+  <data name="Language"><value>Language</value></data>
+  <data name="English"><value>English</value></data>
+  <data name="Chinese"><value>中文</value></data>
+  <data name="Overview"><value>Dashboard</value></data>
+</root>

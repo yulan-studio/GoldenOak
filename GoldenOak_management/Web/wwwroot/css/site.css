@@ -71,11 +71,21 @@ button, input, select, textarea { font: inherit; }
 .go-breadcrumb { color: var(--go-muted); font-size: 13px; }
 .go-breadcrumb span { padding: 0 8px; color: #b9c2be; }
 .go-breadcrumb strong { color: var(--go-ink); font-weight: 650; }
-.go-topbar-actions { display: flex; align-items: center; gap: 16px; }
+.go-topbar-actions { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .go-role-badge { padding: 8px 12px; border-radius: 8px; color: var(--go-green); background: #eef5f1; font-size: 12px; font-weight: 650; }
-.go-topbar .navbar-nav { margin: 0; }
-.go-topbar .nav-link { padding: 6px 0; color: var(--go-green) !important; font-size: 13px; font-weight: 650; }
-.go-topbar form { margin: 0; }
+.go-user-actions { display: flex; align-items: center; gap: 12px; padding-left: 14px; border-left: 1px solid var(--go-line); }
+.go-user-link { display: flex; align-items: center; gap: 9px; min-width: 0; color: var(--go-ink); text-decoration: none; }
+.go-user-link:hover { color: var(--go-green); }
+.go-user-avatar { display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; color: #fff; background: var(--go-green); border-radius: 50%; font-size: 11px; font-weight: 750; letter-spacing: .2px; }
+.go-user-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.go-user-copy small { color: var(--go-muted); font-size: 10px; }
+.go-user-copy strong { max-width: 170px; overflow: hidden; color: var(--go-ink); font-size: 12px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.go-logout-form { margin: 0; }
+.go-logout-button, .go-auth-link { padding: 7px 10px; color: var(--go-muted); background: transparent; border: 1px solid transparent; border-radius: 7px; font-size: 12px; text-decoration: none; }
+.go-logout-button:hover, .go-auth-link:hover { color: var(--go-green); background: #eef5f1; }
+.go-auth-primary { color: #fff; background: var(--go-green); }
+.go-auth-primary:hover { color: #fff; background: var(--go-green-2); }
+.go-language-switcher select { padding: 7px 28px 7px 10px; color: var(--go-green); background: #fff; border: 1px solid var(--go-line); border-radius: 7px; font-size: 12px; font-weight: 650; }
 
 .go-content { width: 100%; max-width: 1440px; flex: 1; padding: 30px 34px 60px; }
 .go-footer { display: flex; justify-content: space-between; padding: 18px 34px; color: var(--go-muted); border-top: 1px solid var(--go-line); background: #fff; font-size: 12px; }
@@ -117,6 +127,8 @@ button, input, select, textarea { font: inherit; }
   .go-content { padding: 24px 18px 40px; }
   .go-topbar { padding: 0 18px; }
   .go-role-badge { display: none; }
+  .go-user-copy { display: none; }
+  .go-user-actions { padding-left: 8px; gap: 6px; }
   .go-page-header { align-items: start; flex-direction: column; }
   .go-card-grid, .go-panel-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
