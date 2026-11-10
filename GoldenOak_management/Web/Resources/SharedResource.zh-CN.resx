@@ -21,4 +21,17 @@
   <data name="English"><value>English</value></data>
   <data name="Chinese"><value>中文</value></data>
   <data name="Overview"><value>总览</value></data>
+  <data name="BuildingsTitle"><value>楼宇</value></data><data name="UnitsTitle"><value>单元</value></data>
+  <data name="AddBuilding"><value>新增楼宇</value></data><data name="AddUnit"><value>新增单元</value></data>
+  <data name="BackToBuildings"><value>返回楼宇</value></data><data name="PropertyPortfolio"><value>房产组合</value></data>
+  <data name="ManageBuildingsUnits"><value>管理楼宇和单元。</value></data><data name="Address"><value>地址</value></data>
+  <data name="Type"><value>类型</value></data><data name="UnitCount"><value>单元数</value></data><data name="Actions"><value>操作</value></data>
+  <data name="Unit"><value>单元</value></data><data name="Bedroom"><value>卧室</value></data><data name="Bathroom"><value>卫生间</value></data><data name="Status"><value>状态</value></data>
+  <data name="Area"><value>面积</value></data><data name="Rent"><value>租金</value></data><data name="Save"><value>保存</value></data><data name="Cancel"><value>取消</value></data>
+  <data name="Edit"><value>编辑</value></data><data name="Delete"><value>删除</value></data><data name="ConfirmDelete"><value>确认删除</value></data>
+  <data name="ConfirmBuildingDelete"><value>确定要删除这个楼宇吗？包含单元的楼宇不能删除。</value></data><data name="ConfirmUnitDelete"><value>确定要删除这个单元吗？此操作不可恢复。</value></data>
+  <data name="CurrentStatus"><value>当前状态</value></data>
+  <data name="Active"><value>Active</value></data><data name="Inactive"><value>停用</value></data><data name="Available"><value>可出租</value></data><data name="Occupied"><value>已入住</value></data><data name="Unavailable"><value>暂不可用</value></data><data name="Archived"><value>已归档</value></data>
+  <data name="BuildingStatusActive"><value>Active</value></data><data name="BuildingStatusInactive"><value>停用</value></data>
+  <data name="UnitStatusAvailable"><value>可出租</value></data><data name="UnitStatusOccupied"><value>已入住</value></data><data name="UnitStatusUnavailable"><value>暂不可用</value></data><data name="UnitStatusArchived"><value>已归档</value></data>
 </root>

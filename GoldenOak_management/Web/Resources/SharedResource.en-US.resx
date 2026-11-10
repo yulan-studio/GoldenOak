@@ -21,4 +21,17 @@
   <data name="English"><value>English</value></data>
   <data name="Chinese"><value>中文</value></data>
   <data name="Overview"><value>Dashboard</value></data>
+  <data name="BuildingsTitle"><value>Buildings</value></data><data name="UnitsTitle"><value>Units</value></data>
+  <data name="AddBuilding"><value>Add Building</value></data><data name="AddUnit"><value>Add Unit</value></data>
+  <data name="BackToBuildings"><value>Back to Buildings</value></data><data name="PropertyPortfolio"><value>Property portfolio</value></data>
+  <data name="ManageBuildingsUnits"><value>Manage buildings and units.</value></data><data name="Address"><value>Address</value></data>
+  <data name="Type"><value>Type</value></data><data name="UnitCount"><value>Units</value></data><data name="Actions"><value>Actions</value></data>
+  <data name="Unit"><value>Unit</value></data><data name="Bedroom"><value>Bedrooms</value></data><data name="Bathroom"><value>Bathrooms</value></data><data name="Status"><value>Status</value></data>
+  <data name="Area"><value>Area</value></data><data name="Rent"><value>Rent</value></data><data name="Save"><value>Save</value></data><data name="Cancel"><value>Cancel</value></data>
+  <data name="Edit"><value>Edit</value></data><data name="Delete"><value>Delete</value></data><data name="ConfirmDelete"><value>Confirm delete</value></data>
+  <data name="ConfirmBuildingDelete"><value>Are you sure you want to delete this building? A building with units cannot be deleted.</value></data><data name="ConfirmUnitDelete"><value>Are you sure you want to delete this unit? This action cannot be undone.</value></data>
+  <data name="CurrentStatus"><value>Current status</value></data>
+  <data name="Active"><value>Active</value></data><data name="Inactive"><value>Inactive</value></data><data name="Available"><value>Available</value></data><data name="Occupied"><value>Occupied</value></data><data name="Unavailable"><value>Unavailable</value></data><data name="Archived"><value>Archived</value></data>
+  <data name="BuildingStatusActive"><value>Active</value></data><data name="BuildingStatusInactive"><value>Inactive</value></data>
+  <data name="UnitStatusAvailable"><value>Available</value></data><data name="UnitStatusOccupied"><value>Occupied</value></data><data name="UnitStatusUnavailable"><value>Unavailable</value></data><data name="UnitStatusArchived"><value>Archived</value></data>
 </root>

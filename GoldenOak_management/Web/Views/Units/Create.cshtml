@@ -1,2 +1,2 @@
 @model Web.Models.Unit
-@{ ViewData["Title"] = "新增单元"; var building = (Web.Models.Building)ViewBag.Building; }<div class="go-page-header"><div><div class="go-eyebrow">@building.BuildingName</div><h1 class="go-page-title">新增单元</h1></div></div><partial name="_UnitForm" model="Model" />
+@{ ViewData["Title"] = L["AddUnit"]; var building = (Web.Models.Building)ViewBag.Building; }<div class="go-page-header"><div><div class="go-eyebrow">@building.BuildingName</div><h1 class="go-page-title">@L["AddUnit"]</h1></div></div><partial name="_UnitForm" model="Model" />
