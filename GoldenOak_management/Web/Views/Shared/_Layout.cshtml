@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Golden Oak</title>
+    <title>@ViewData["Title"] - GoldenOak</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -16,8 +16,8 @@
     <div class="go-app-shell">
         <aside class="go-sidebar">
             <a class="go-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                <span class="go-brand-mark">✦</span>
-                <span><strong>Golden Oak</strong><small>Asset Management</small></span>
+                <span class="go-brand-mark"><img src="~/images/golden-oak-logo.png" alt="GoldenOak logo" /></span>
+                <span><strong>GoldenOak</strong><small>Asset Management</small></span>
             </a>
 
             <div class="go-nav-label">@L["Workspace"]</div>
@@ -41,7 +41,7 @@
 
         <div class="go-main-shell">
             <header class="go-topbar">
-                <div class="go-breadcrumb">Golden Oak Portal <span>/</span> <strong>@ViewData["Title"]</strong></div>
+                <div class="go-breadcrumb">GoldenOak Portal <span>/</span> <strong>@ViewData["Title"]</strong></div>
                 <div class="go-topbar-actions">
                     <form asp-controller="Home" asp-action="SetLanguage" method="post" class="go-language-switcher">
                         @Html.AntiForgeryToken()
@@ -60,7 +60,7 @@
             </main>
 
             <footer class="go-footer">
-                <span>© 2026 Golden Oak Asset Management</span>
+                <span>© 2026 GoldenOak Asset Management</span>
                 <a asp-area="" asp-controller="Home" asp-action="Privacy">@L["Privacy"]</a>
             </footer>
         </div>

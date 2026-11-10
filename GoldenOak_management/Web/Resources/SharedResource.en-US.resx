@@ -37,7 +37,7 @@
   <data name="AlreadyLinked"><value>Already linked</value></data><data name="SelectOwner"><value>Select owner</value></data>
   <data name="UnitStatusAvailable"><value>Available</value></data><data name="UnitStatusOccupied"><value>Occupied</value></data><data name="UnitStatusUnavailable"><value>Unavailable</value></data><data name="UnitStatusArchived"><value>Archived</value></data>
   <data name="PropertyManagerWorkspace"><value>Property Manager Workspace</value></data>
-  <data name="GoodMorningGoldenOak"><value>Good morning, Golden Oak</value></data>
+  <data name="GoodMorningGoldenOak"><value>Good morning, GoldenOak</value></data>
   <data name="PortfolioSummary"><value>Here is an overview of the buildings and units you currently manage.</value></data>
   <data name="CreateMonthlyReport"><value>Create monthly report</value></data>
   <data name="ManagedBuildings"><value>Managed buildings</value></data>

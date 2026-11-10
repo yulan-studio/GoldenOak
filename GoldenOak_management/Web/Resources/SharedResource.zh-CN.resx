@@ -37,7 +37,7 @@
   <data name="AlreadyLinked"><value>已关联</value></data><data name="SelectOwner"><value>选择此业主</value></data>
   <data name="UnitStatusAvailable"><value>可出租</value></data><data name="UnitStatusOccupied"><value>已入住</value></data><data name="UnitStatusUnavailable"><value>暂不可用</value></data><data name="UnitStatusArchived"><value>已归档</value></data>
   <data name="PropertyManagerWorkspace"><value>物业经理工作区</value></data>
-  <data name="GoodMorningGoldenOak"><value>早上好，Golden Oak</value></data>
+  <data name="GoodMorningGoldenOak"><value>早上好，GoldenOak</value></data>
   <data name="PortfolioSummary"><value>这里是您当前管理的楼宇和单元概况。</value></data>
   <data name="CreateMonthlyReport"><value>创建月度报表</value></data>
   <data name="ManagedBuildings"><value>管理中的楼宇</value></data>
