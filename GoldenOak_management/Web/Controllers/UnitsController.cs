@@ -13,6 +13,8 @@ public sealed class UnitsController(IPropertyPortfolioService service) : Control
 
     public async Task<IActionResult> Edit(long id, CancellationToken ct) { var item = await service.GetUnitAsync(id, ct); return item is null ? NotFound() : View(item); }
 
+    public async Task<IActionResult> Owners(long id, CancellationToken ct) { var model = await service.GetUnitOwnersAsync(id, ct); return model is null ? NotFound() : View(model); }
+
     public async Task<IActionResult> Delete(long id, CancellationToken ct) { var item = await service.GetUnitAsync(id, ct); return item is null ? NotFound() : View(item); }
 
     [HttpPost, ValidateAntiForgeryToken]

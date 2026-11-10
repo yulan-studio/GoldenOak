@@ -13,4 +13,5 @@ public interface IPropertyPortfolioService
     Task CreateUnitAsync(Unit unit, CancellationToken cancellationToken = default);
     Task<bool> UpdateUnitAsync(Unit unit, CancellationToken cancellationToken = default);
     Task<bool> DeleteUnitAsync(long id, CancellationToken cancellationToken = default);
+    Task<UnitOwnerViewModel?> GetUnitOwnersAsync(long unitId, CancellationToken cancellationToken = default);
 }

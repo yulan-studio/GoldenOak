@@ -47,4 +47,17 @@ public sealed class PropertyPortfolioService : IPropertyPortfolioService
         var item = await _db.Units.FindAsync([id], ct); if (item is null) return false;
         _db.Units.Remove(item); await _db.SaveChangesAsync(ct); return true;
     }
+
+    public async Task<UnitOwnerViewModel?> GetUnitOwnersAsync(long unitId, CancellationToken ct = default)
+    {
+        var unit = await _db.Units.AsNoTracking().FirstOrDefaultAsync(x => x.UnitId == unitId, ct);
+        if (unit is null) return null;
+        var building = await _db.Buildings.AsNoTracking().FirstAsync(x => x.BuildingId == unit.BuildingId, ct);
+        var owners = await (from relation in _db.UnitOwners.AsNoTracking()
+                            join profile in _db.OwnerProfiles.AsNoTracking() on relation.OwnerId equals profile.UserId
+                            join user in _db.Users.AsNoTracking() on profile.UserId equals user.Id
+                            where relation.UnitId == unitId
+                            select new UnitOwnerSummary { FullName = profile.FullName, Email = user.Email, OwnershipPercentage = relation.OwnershipPercentage, ValidFrom = relation.ValidFrom, ValidTo = relation.ValidTo }).ToListAsync(ct);
+        return new UnitOwnerViewModel { UnitId = unitId, BuildingId = unit.BuildingId, UnitNumber = unit.UnitNumber, BuildingName = building.BuildingName, Owners = owners };
+    }
 }

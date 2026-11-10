@@ -33,5 +33,6 @@
   <data name="CurrentStatus"><value>当前状态</value></data>
   <data name="Active"><value>Active</value></data><data name="Inactive"><value>停用</value></data><data name="Available"><value>可出租</value></data><data name="Occupied"><value>已入住</value></data><data name="Unavailable"><value>暂不可用</value></data><data name="Archived"><value>已归档</value></data>
   <data name="BuildingStatusActive"><value>Active</value></data><data name="BuildingStatusInactive"><value>停用</value></data>
+  <data name="Owner"><value>业主</value></data>
   <data name="UnitStatusAvailable"><value>可出租</value></data><data name="UnitStatusOccupied"><value>已入住</value></data><data name="UnitStatusUnavailable"><value>暂不可用</value></data><data name="UnitStatusArchived"><value>已归档</value></data>
 </root>

@@ -110,6 +110,7 @@ button, input, select, textarea { font: inherit; }
 .go-table th { padding: 10px 8px; color: var(--go-muted); border-bottom: 1px solid var(--go-line); font-size: 11px; font-weight: 650; text-align: left; }
 .go-table td { padding: 13px 8px; border-bottom: 1px solid #eef1ef; vertical-align: middle; }
 .go-actions { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.go-action-separator { width: 2px; height: 20px; background: #7f9b91; border-radius: 1px; }
 .go-link-button { padding: 0; color: var(--go-red); background: transparent; border: 0; font: inherit; cursor: pointer; }
 .go-form { max-width: 920px; }
 .go-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
@@ -120,6 +121,7 @@ button, input, select, textarea { font: inherit; }
 .go-status-warning { color: #986817; background: #fff3d9; }
 .go-status-danger { color: #a43835; background: #fde8e6; }
 .go-status-info { color: var(--go-blue); background: #e7f0fb; }
+.go-panel .go-status-info { color: #237255; background: #e4f3eb; }
 
 .form-control, .form-select { border-color: var(--go-line); border-radius: 7px; }
 .form-control:focus, .form-select:focus { border-color: var(--go-green-2); box-shadow: 0 0 0 .2rem rgba(22, 119, 98, .13); }

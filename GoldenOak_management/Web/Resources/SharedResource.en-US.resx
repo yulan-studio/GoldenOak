@@ -33,5 +33,6 @@
   <data name="CurrentStatus"><value>Current status</value></data>
   <data name="Active"><value>Active</value></data><data name="Inactive"><value>Inactive</value></data><data name="Available"><value>Available</value></data><data name="Occupied"><value>Occupied</value></data><data name="Unavailable"><value>Unavailable</value></data><data name="Archived"><value>Archived</value></data>
   <data name="BuildingStatusActive"><value>Active</value></data><data name="BuildingStatusInactive"><value>Inactive</value></data>
+  <data name="Owner"><value>Owner</value></data>
   <data name="UnitStatusAvailable"><value>Available</value></data><data name="UnitStatusOccupied"><value>Occupied</value></data><data name="UnitStatusUnavailable"><value>Unavailable</value></data><data name="UnitStatusArchived"><value>Archived</value></data>
 </root>

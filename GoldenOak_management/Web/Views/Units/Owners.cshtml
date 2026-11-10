@@ -1,0 +1,4 @@
+@model Web.Models.UnitOwnerViewModel
+@{ ViewData["Title"] = L["Owner"]; }
+<div class="go-page-header"><div><div class="go-eyebrow">@Model.BuildingName · Unit @Model.UnitNumber</div><h1 class="go-page-title">@L["Owner"]</h1><div class="go-page-subtitle">查看该单元对应的业主和产权比例。</div></div><a class="go-btn-back" asp-controller="Buildings" asp-action="Units" asp-route-id="@Model.BuildingId">← 返回单元</a></div>
+<section class="go-panel"><table class="go-table"><thead><tr><th>姓名</th><th>Email</th><th>产权比例</th><th>有效开始</th><th>有效结束</th></tr></thead><tbody>@if (Model.Owners.Count == 0) { <tr><td colspan="5" class="text-muted">尚未建立 Owner 关系。</td></tr> } else { foreach (var owner in Model.Owners) { <tr><td><strong>@owner.FullName</strong></td><td>@owner.Email</td><td>@owner.OwnershipPercentage%</td><td>@owner.ValidFrom</td><td>@(owner.ValidTo?.ToString() ?? "—")</td></tr> } }</tbody></table></section>
