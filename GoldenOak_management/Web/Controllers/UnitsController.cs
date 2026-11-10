@@ -1,24 +1,31 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Web.Models;
 using Web.Services;
 
 namespace Web.Controllers;
 
+[Authorize]
 public sealed class UnitsController(IPropertyPortfolioService service) : Controller
 {
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create(long buildingId, CancellationToken ct) { var building = await service.GetBuildingAsync(buildingId, ct); if (building is null) return NotFound(); ViewBag.Building = building; return View(new Unit { BuildingId = buildingId, Status = "AVAILABLE" }); }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create(Unit model, CancellationToken ct) { var building = await service.GetBuildingAsync(model.BuildingId, ct); if (building is null) return NotFound(); if (!ModelState.IsValid) { ViewBag.Building = building; return View(model); } await service.CreateUnitAsync(model, ct); return RedirectToAction("Units", "Buildings", new { id = model.BuildingId }); }
 
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Edit(long id, CancellationToken ct) { var item = await service.GetUnitAsync(id, ct); return item is null ? NotFound() : View(item); }
 
     public async Task<IActionResult> Owners(long id, CancellationToken ct) { var model = await service.GetUnitOwnersAsync(id, ct); return model is null ? NotFound() : View(model); }
 
     [HttpGet]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> CreateOwner(long unitId, CancellationToken ct) { var model = await service.GetCreateOwnerModelAsync(unitId, ct); return model is null ? NotFound() : View(model); }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> CreateOwner(CreateOwnerForUnitViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid) return View(model);
@@ -26,10 +33,11 @@ public sealed class UnitsController(IPropertyPortfolioService service) : Control
         return RedirectToAction(nameof(Owners), new { id = model.UnitId });
     }
 
-    [HttpGet]
+    [HttpGet, Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> SearchOwners(long unitId, string term, CancellationToken ct) => Json(await service.SearchOwnersAsync(unitId, term, ct));
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> AddExistingOwner(long unitId, long ownerId, decimal ownershipPercentage, DateOnly validFrom, CancellationToken ct)
     {
         if (!await service.AddExistingOwnerToUnitAsync(unitId, ownerId, ownershipPercentage, validFrom, ct))
@@ -38,9 +46,11 @@ public sealed class UnitsController(IPropertyPortfolioService service) : Control
     }
 
     [HttpGet]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> EditOwner(long id, CancellationToken ct) { var model = await service.GetEditOwnerModelAsync(id, ct); return model is null ? NotFound() : View(model); }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> EditOwner(EditOwnerForUnitViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid) return View(model);
@@ -49,6 +59,7 @@ public sealed class UnitsController(IPropertyPortfolioService service) : Control
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> AddOwner(long unitId, long ownerId, decimal ownershipPercentage, DateOnly validFrom, CancellationToken ct)
     {
         await service.AddUnitOwnerAsync(unitId, ownerId, ownershipPercentage, validFrom, ct);
@@ -56,17 +67,21 @@ public sealed class UnitsController(IPropertyPortfolioService service) : Control
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> DeleteOwner(long id, long unitId, CancellationToken ct)
     {
         await service.DeleteUnitOwnerAsync(id, ct);
         return RedirectToAction(nameof(Owners), new { id = unitId });
     }
 
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Delete(long id, CancellationToken ct) { var item = await service.GetUnitAsync(id, ct); return item is null ? NotFound() : View(item); }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Edit(long id, Unit model, CancellationToken ct) { if (id != model.UnitId) return BadRequest(); if (!ModelState.IsValid) return View(model); if (!await service.UpdateUnitAsync(model, ct)) return NotFound(); return RedirectToAction("Units", "Buildings", new { id = model.BuildingId }); }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Delete(long id, long buildingId, CancellationToken ct) { await service.DeleteUnitAsync(id, ct); return RedirectToAction("Units", "Buildings", new { id = buildingId }); }
 }
