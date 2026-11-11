@@ -34,6 +34,7 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddScoped<IPropertyManagerDashboardService, PropertyManagerDashboardService>();
 builder.Services.AddScoped<IPropertyPortfolioService, PropertyPortfolioService>();
 builder.Services.AddScoped<ITenancyService, TenancyService>();
+builder.Services.AddScoped<IRenterService, RenterService>();
 
 var app = builder.Build();
 
