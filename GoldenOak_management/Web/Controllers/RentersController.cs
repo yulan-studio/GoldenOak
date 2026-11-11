@@ -9,7 +9,18 @@ namespace Web.Controllers;
 [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
 public sealed class RentersController(IRenterService service, UserManager<ApplicationUser> userManager) : Controller
 {
-    public async Task<IActionResult> Index(CancellationToken ct) => View(await service.GetRentersAsync(ct));
+    public async Task<IActionResult> Index(CancellationToken ct)
+    {
+        var renters = await service.GetRentersAsync(ct);
+        var contacts = new Dictionary<long, ApplicationUser>();
+        foreach (var renter in renters)
+        {
+            var user = await userManager.FindByIdAsync(renter.UserId.ToString());
+            if (user is not null) contacts[renter.UserId] = user;
+        }
+        ViewBag.RenterContacts = contacts;
+        return View(renters);
+    }
     [HttpGet] public async Task<IActionResult> Search(string term, CancellationToken ct) => Json(await service.SearchRentersAsync(term, ct));
     [Authorize(Roles = "ADMIN")]
     [HttpGet] public IActionResult Create() => View(new CreateRenterViewModel());
