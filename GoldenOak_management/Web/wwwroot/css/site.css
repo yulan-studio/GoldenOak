@@ -115,6 +115,15 @@ button, input, select, textarea { font: inherit; }
 .go-confirm-modal .modal-footer { padding: 14px 22px 20px; border-top: 0; }
 .go-btn-danger { padding: 8px 14px; color: #fff; background: #b84a45; border: 1px solid #b84a45; border-radius: 7px; font-weight: 650; }
 .go-btn-danger:hover { color: #fff; background: #963a36; border-color: #963a36; }
+#add-renter-modal .modal-footer { border-top: 0; }
+#add-renter-modal #create-pane > form > label { display: inline-block; padding-top: 8px; }
+#add-renter-modal .nav-tabs { position: relative; display: flex; width: 100%; border-bottom: 0 !important; }
+#add-renter-modal .nav-tabs::after { position: absolute; right: 0; bottom: 0; left: 0; height: 1px; background: #dfe9e4; content: ""; }
+#add-renter-modal .nav-link { position: relative; z-index: 1; padding: 9px 16px; color: var(--go-ink); background: #fff; border: 0; border-bottom: 2px solid transparent; border-radius: 8px 8px 0 0; font-weight: 650; }
+#add-renter-modal .nav-link:hover { color: #237255; border-color: transparent; }
+#add-renter-modal .nav-link.active { color: #237255; background: #f1f8f4; border-bottom-color: #237255; }
+#add-renter-modal #search-pane:not([hidden]),
+#add-renter-modal #create-pane:not([hidden]) { padding: 14px; background: #f1f8f4; border-radius: 8px; }
 .go-table td > a + form,
 .go-table td > form + form,
 .go-table td > form + button { margin-left: 12px; }
@@ -132,6 +141,7 @@ button, input, select, textarea { font: inherit; }
 .go-link-button { padding: 0; color: var(--go-red); background: transparent; border: 0; font: inherit; cursor: pointer; }
 .go-form { max-width: 920px; }
 .go-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.go-form > .go-form-grid + .go-form-grid { margin-top: 18px; }
 .go-form-grid label { display: block; margin-bottom: 6px; color: var(--go-muted); font-size: 12px; font-weight: 650; }
 .go-form-actions { display: flex; align-items: center; gap: 10px; margin-top: 24px; }
 .go-search-row { display: flex; gap: 10px; max-width: 470px; }

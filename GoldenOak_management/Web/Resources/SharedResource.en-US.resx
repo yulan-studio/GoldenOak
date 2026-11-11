@@ -119,6 +119,7 @@
   <data name="UnitNumber"><value>Unit Number</value></data>
   <data name="StartDate"><value>Start Date</value></data>
   <data name="EndDate"><value>End Date</value></data>
+  <data name="DepositReceivedDate"><value>Deposit Received Date</value></data>
   <data name="MonthlyRent"><value>Monthly Rent</value></data>
   <data name="DepositAmount"><value>Deposit</value></data>
   <data name="RenterInformation"><value>Renter Information</value></data>

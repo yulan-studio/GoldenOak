@@ -129,6 +129,7 @@
   <data name="UnitNumber"><value>单元号</value></data>
   <data name="StartDate"><value>开始日期</value></data>
   <data name="EndDate"><value>结束日期</value></data>
+  <data name="DepositReceivedDate"><value>押金收取日期</value></data>
   <data name="MonthlyRent"><value>月租金</value></data>
   <data name="DepositAmount"><value>押金</value></data>
   <data name="CurrentStatus"><value>当前状态</value></data>
