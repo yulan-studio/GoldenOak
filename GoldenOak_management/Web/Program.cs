@@ -33,6 +33,7 @@ builder.Services.AddControllersWithViews()
 // 注册业务服务。Controller 通过接口调用业务逻辑，不直接访问数据库。
 builder.Services.AddScoped<IPropertyManagerDashboardService, PropertyManagerDashboardService>();
 builder.Services.AddScoped<IPropertyPortfolioService, PropertyPortfolioService>();
+builder.Services.AddScoped<ITenancyService, TenancyService>();
 
 var app = builder.Build();
 
