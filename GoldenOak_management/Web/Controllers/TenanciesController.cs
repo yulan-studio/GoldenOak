@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Web.Data;
 using Web.Models;
 using Web.Services;
 
@@ -9,7 +11,8 @@ namespace Web.Controllers;
 [Authorize]
 public sealed class TenanciesController(
     ITenancyService service,
-    UserManager<ApplicationUser> userManager) : Controller
+    UserManager<ApplicationUser> userManager,
+    ApplicationDbContext db) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -34,17 +37,21 @@ public sealed class TenanciesController(
 
     [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
     [HttpGet]
-    public IActionResult Create() => View(new CreateTenancyViewModel
+    public async Task<IActionResult> Create(CancellationToken ct)
     {
-        LeaseStartDate = DateOnly.FromDateTime(DateTime.Today),
-        LeaseEndDate = DateOnly.FromDateTime(DateTime.Today).AddYears(1)
-    });
+        await LoadCreateOptionsAsync(ct);
+        return View(new CreateTenancyViewModel
+        {
+            LeaseStartDate = DateOnly.FromDateTime(DateTime.Today),
+            LeaseEndDate = DateOnly.FromDateTime(DateTime.Today).AddYears(1)
+        });
+    }
 
     [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateTenancyViewModel model, CancellationToken ct)
     {
-        if (!ModelState.IsValid) return View(model);
+        if (!ModelState.IsValid) { await LoadCreateOptionsAsync(ct); return View(model); }
         var id = await service.CreateTenancyAsync(new Tenancy
         {
             UnitId = model.UnitId,
@@ -58,13 +65,13 @@ public sealed class TenanciesController(
         if (id == 0)
         {
             ModelState.AddModelError(string.Empty, "无法创建租约：请检查日期、金额、房源以及是否已有 ACTIVE 租约。");
-            return View(model);
+            await LoadCreateOptionsAsync(ct); return View(model);
         }
 
         if (model.PrimaryRenterId > 0 && !await service.AddRenterAsync(id, model.PrimaryRenterId, true, ct))
         {
             ModelState.AddModelError(nameof(model.PrimaryRenterId), "租客不存在，租约已创建但未添加主租客。");
-            return View(model);
+            await LoadCreateOptionsAsync(ct); return View(model);
         }
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -148,5 +155,11 @@ public sealed class TenanciesController(
         if (!User.IsInRole("RENTER")) return true;
         var user = await userManager.GetUserAsync(User);
         return user is not null && tenancy.Renters.Any(x => x.RenterId == user.Id);
+    }
+
+    private async Task LoadCreateOptionsAsync(CancellationToken ct)
+    {
+        ViewBag.Buildings = await db.Buildings.AsNoTracking().Include(x => x.Units).OrderBy(x => x.BuildingName).ToListAsync(ct);
+        ViewBag.Renters = await db.RenterProfiles.AsNoTracking().OrderBy(x => x.FullName).ToListAsync(ct);
     }
 }

@@ -5,6 +5,9 @@ namespace Web.Models;
 public class CreateTenancyViewModel
 {
     [Range(1, long.MaxValue)]
+    public long BuildingId { get; set; }
+
+    [Range(1, long.MaxValue)]
     public long UnitId { get; set; }
 
     [Required]

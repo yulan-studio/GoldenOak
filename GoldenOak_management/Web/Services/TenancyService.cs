@@ -19,6 +19,7 @@ public sealed class TenancyService : ITenancyService
             .AsNoTracking()
             .Include(x => x.Unit)
             .Include(x => x.Renters)
+                .ThenInclude(x => x.Renter)
             .OrderByDescending(x => x.LeaseStartDate)
             .ThenBy(x => x.Unit.UnitNumber)
             .ToListAsync(ct);
@@ -29,6 +30,7 @@ public sealed class TenancyService : ITenancyService
         return _db.Tenancies
             .Include(x => x.Unit)
             .Include(x => x.Renters)
+                .ThenInclude(x => x.Renter)
             .Include(x => x.Lease)
             .FirstOrDefaultAsync(x => x.TenancyId == id, ct);
     }
@@ -45,6 +47,7 @@ public sealed class TenancyService : ITenancyService
         model.UpdatedAt = now;
         _db.Tenancies.Add(model);
         await _db.SaveChangesAsync(ct);
+        await UpdateUnitStatusAsync(model.UnitId, model.LeaseStartDate, ct);
         return model.TenancyId;
     }
 
@@ -70,6 +73,7 @@ public sealed class TenancyService : ITenancyService
         item.Status = model.Status;
         item.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
+        await UpdateUnitStatusAsync(item.UnitId, item.LeaseStartDate, ct);
         return true;
     }
 
@@ -87,6 +91,8 @@ public sealed class TenancyService : ITenancyService
         item.Status = status;
         item.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
+        if (status == "ACTIVE" || status == "PENDING")
+            await UpdateUnitStatusAsync(item.UnitId, item.LeaseStartDate, ct);
         return true;
     }
 
@@ -140,5 +146,14 @@ public sealed class TenancyService : ITenancyService
             x => x.UnitId == unitId &&
                  x.Status == "ACTIVE" &&
                  (!excludedTenancyId.HasValue || x.TenancyId != excludedTenancyId.Value), ct);
+    }
+
+    private async Task UpdateUnitStatusAsync(long unitId, DateOnly leaseStartDate, CancellationToken ct)
+    {
+        var unit = await _db.Units.FirstOrDefaultAsync(x => x.UnitId == unitId, ct);
+        if (unit is null) return;
+        unit.Status = leaseStartDate <= DateOnly.FromDateTime(DateTime.UtcNow) ? "OCCUPIED" : "RESERVED";
+        unit.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(ct);
     }
 }
