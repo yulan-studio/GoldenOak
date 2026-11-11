@@ -146,7 +146,7 @@ public sealed class TenanciesController(
         return RedirectToAction(nameof(Details), new { id });
     }
 
-    [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
+    [Authorize(Roles = "ADMIN")]
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> QuickCreateRenter(long id, CreateRenterViewModel model, CancellationToken ct)
     {
