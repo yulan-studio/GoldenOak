@@ -1,0 +1,3 @@
+@model Web.Models.Tenancy
+@{ ViewData["Title"] = "添加租客"; }
+<h1 class="go-page-title">添加租客</h1><p>租约房源：@Model.Unit.UnitNumber</p><form asp-action="AddRenter" method="post"><input type="hidden" name="id" value="@Model.TenancyId" /><div><label>租客 User ID</label><input name="renterId" type="number" min="1" required /></div><div><label><input name="isPrimary" type="checkbox" value="true" /> 设为主租客</label></div><button class="go-btn-primary" type="submit">添加</button><a asp-action="Details" asp-route-id="@Model.TenancyId">取消</a></form>

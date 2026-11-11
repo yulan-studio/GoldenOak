@@ -1,0 +1,4 @@
+@model List<Web.Models.Tenancy>
+@{ ViewData["Title"] = "租约列表"; }
+<div class="go-page-header"><div><h1 class="go-page-title">租约列表</h1></div>@if (User.IsInRole("ADMIN") || User.IsInRole("PROPERTY_MANAGER")) { <div class="go-header-actions"><a class="go-btn-primary" asp-action="Create">＋ 创建租约</a></div> }</div>
+<section class="go-panel"><div class="table-responsive"><table class="go-table"><thead><tr><th>房源</th><th>开始日期</th><th>结束日期</th><th>月租金</th><th>状态</th><th>操作</th></tr></thead><tbody>@foreach (var item in Model) { <tr><td>@item.Unit.UnitNumber</td><td>@item.LeaseStartDate</td><td>@item.LeaseEndDate</td><td>@item.MonthlyRent.ToString("C2")</td><td>@item.Status</td><td><a asp-action="Details" asp-route-id="@item.TenancyId">详情</a></td></tr> }</tbody></table></div></section>
