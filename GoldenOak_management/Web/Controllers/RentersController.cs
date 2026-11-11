@@ -21,4 +21,6 @@ public sealed class RentersController(IRenterService service, UserManager<Applic
     [HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Edit(EditRenterViewModel model, CancellationToken ct) { if (!ModelState.IsValid) return View(model); if (!await service.UpdateRenterAsync(model, ct)) { ModelState.AddModelError(string.Empty, "无法更新租客资料。"); return View(model); } return RedirectToAction(nameof(Index)); }
     [Authorize(Roles = "ADMIN")]
     [HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Archive(long id, CancellationToken ct) { await service.ArchiveRenterAsync(id, ct); return RedirectToAction(nameof(Index)); }
+    [Authorize(Roles = "ADMIN")]
+    [HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Delete(long id, CancellationToken ct) { if (!await service.DeleteRenterAsync(id, ct)) TempData["Error"] = "无法删除租客：该租客可能仍关联租约。"; return RedirectToAction(nameof(Index)); }
 }

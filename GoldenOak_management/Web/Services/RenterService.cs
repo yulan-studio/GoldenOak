@@ -58,4 +58,20 @@ public sealed class RenterService(ApplicationDbContext db, UserManager<Applicati
         profile.ArchivedAt = DateTime.UtcNow; profile.UpdatedAt = DateTime.UtcNow; user.Status = "DEACTIVATED";
         await userManager.UpdateAsync(user); await db.SaveChangesAsync(ct); return true;
     }
+
+    public async Task<bool> DeleteRenterAsync(long userId, CancellationToken ct)
+    {
+        var profile = await db.RenterProfiles.FirstOrDefaultAsync(x => x.UserId == userId, ct);
+        var user = await userManager.FindByIdAsync(userId.ToString());
+        if (profile is null || user is null) return false;
+        if (await db.TenancyRenters.AnyAsync(x => x.RenterId == userId, ct)) return false;
+
+        await using var transaction = await db.Database.BeginTransactionAsync(ct);
+        db.RenterProfiles.Remove(profile);
+        await db.SaveChangesAsync(ct);
+        var result = await userManager.DeleteAsync(user);
+        if (!result.Succeeded) { await transaction.RollbackAsync(ct); return false; }
+        await transaction.CommitAsync(ct);
+        return true;
+    }
 }

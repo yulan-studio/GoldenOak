@@ -18,6 +18,7 @@ public sealed class TenancyService : ITenancyService
         return _db.Tenancies
             .AsNoTracking()
             .Include(x => x.Unit)
+                .ThenInclude(x => x.Building)
             .Include(x => x.Renters)
                 .ThenInclude(x => x.Renter)
             .OrderByDescending(x => x.LeaseStartDate)
