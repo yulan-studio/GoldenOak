@@ -13,6 +13,18 @@ public sealed class RenterService(ApplicationDbContext db, UserManager<Applicati
     public Task<RenterProfile?> GetRenterAsync(long userId, CancellationToken ct) =>
         db.RenterProfiles.FirstOrDefaultAsync(x => x.UserId == userId, ct);
 
+    public async Task<List<RenterSearchResult>> SearchRentersAsync(string term, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(term)) return [];
+        term = term.Trim();
+        return await (from profile in db.RenterProfiles.AsNoTracking()
+                      join user in db.Users.AsNoTracking() on profile.UserId equals user.Id
+                      where profile.ArchivedAt == null &&
+                            (profile.FullName.Contains(term) || (user.Email != null && user.Email.Contains(term)) || (user.PhoneNumber != null && user.PhoneNumber.Contains(term)))
+                      orderby profile.FullName
+                      select new RenterSearchResult { UserId = profile.UserId, FullName = profile.FullName, Email = user.Email, PhoneNumber = user.PhoneNumber }).Take(20).ToListAsync(ct);
+    }
+
     public async Task<long> CreateRenterAsync(CreateRenterViewModel model, CancellationToken ct)
     {
         if (await userManager.FindByEmailAsync(model.Email) is not null) return 0;

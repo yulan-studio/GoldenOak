@@ -12,7 +12,8 @@ namespace Web.Controllers;
 public sealed class TenanciesController(
     ITenancyService service,
     UserManager<ApplicationUser> userManager,
-    ApplicationDbContext db) : Controller
+    ApplicationDbContext db,
+    IRenterService renterService) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken ct)
     {
@@ -32,6 +33,9 @@ public sealed class TenanciesController(
         var item = await service.GetTenancyAsync(id, ct);
         if (item is null) return NotFound();
         if (!await CanViewAsync(item)) return Forbid();
+        ViewBag.RenterProfiles = await db.RenterProfiles.AsNoTracking()
+            .Where(x => item.Renters.Select(r => r.RenterId).Contains(x.UserId))
+            .ToDictionaryAsync(x => x.UserId, ct);
         return View(item);
     }
 
@@ -139,6 +143,17 @@ public sealed class TenanciesController(
     {
         if (!await service.AddRenterAsync(id, renterId, isPrimary, ct))
             TempData["Error"] = "无法添加租客，租约或租客不存在，或该租客已经添加。";
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> QuickCreateRenter(long id, CreateRenterViewModel model, CancellationToken ct)
+    {
+        if (!ModelState.IsValid) { TempData["Error"] = "请完整填写租客资料。"; return RedirectToAction(nameof(Details), new { id }); }
+        var renterId = await renterService.CreateRenterAsync(model, ct);
+        if (renterId == 0 || !await service.AddRenterAsync(id, renterId, true, ct))
+            TempData["Error"] = "无法创建或添加租客，邮箱可能已经存在。";
         return RedirectToAction(nameof(Details), new { id });
     }
 

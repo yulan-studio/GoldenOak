@@ -9,4 +9,5 @@ public interface IRenterService
     Task<long> CreateRenterAsync(CreateRenterViewModel model, CancellationToken ct);
     Task<bool> UpdateRenterAsync(EditRenterViewModel model, CancellationToken ct);
     Task<bool> ArchiveRenterAsync(long userId, CancellationToken ct);
+    Task<List<RenterSearchResult>> SearchRentersAsync(string term, CancellationToken ct);
 }
