@@ -70,13 +70,18 @@ public sealed class TenancyService : ITenancyService
         item.MonthlyRent = model.MonthlyRent;
         item.DepositAmount = model.DepositAmount;
         item.DepositReceivedDate = model.DepositReceivedDate;
-        item.Status = model.Status;
+        // Status is changed only through ChangeStatusAsync, never by the edit form.
+        if (!string.IsNullOrWhiteSpace(model.Status))
+            item.Status = model.Status.Trim().ToUpperInvariant();
         item.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
-        await UpdateUnitStatusAsync(item.UnitId, item.LeaseStartDate, ct);
         return true;
     }
 
+    /// <summary>
+    /// 按业务规则修改租约状态，并同步更新对应房源状态。
+    /// 状态流转规则由 IsAllowedTransition 统一判断，避免通过页面或接口绕过规则。
+    /// </summary>
     public async Task<bool> ChangeStatusAsync(long id, string status, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(status)) return false;
@@ -85,14 +90,14 @@ public sealed class TenancyService : ITenancyService
         if (item is null) return false;
 
         status = status.Trim().ToUpperInvariant();
+        if (!IsAllowedTransition(item.Status, status)) return false;
         if (status == "ACTIVE" && await HasActiveTenancyAsync(item.UnitId, id, ct))
             return false;
 
         item.Status = status;
         item.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
-        if (status == "ACTIVE" || status == "PENDING")
-            await UpdateUnitStatusAsync(item.UnitId, item.LeaseStartDate, ct);
+        await UpdateUnitStatusForStatusChangeAsync(item.UnitId, status, id, ct);
         return true;
     }
 
@@ -153,6 +158,46 @@ public sealed class TenancyService : ITenancyService
         var unit = await _db.Units.FirstOrDefaultAsync(x => x.UnitId == unitId, ct);
         if (unit is null) return;
         unit.Status = leaseStartDate <= DateOnly.FromDateTime(DateTime.UtcNow) ? "OCCUPIED" : "RESERVED";
+        unit.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>
+    /// 判断租约状态是否允许流转：
+    /// PENDING -> ACTIVE/CANCELLED；ACTIVE -> ENDED/TERMINATED。
+    /// 未列出的状态变化，包括终止后重新激活，一律拒绝。
+    /// </summary>
+    private static bool IsAllowedTransition(string currentStatus, string nextStatus) =>
+        (currentStatus, nextStatus) switch
+        {
+            ("PENDING", "ACTIVE") => true,
+            ("PENDING", "CANCELLED") => true,
+            ("ACTIVE", "ENDED") => true,
+            ("ACTIVE", "TERMINATED") => true,
+            _ => false
+        };
+
+    /// <summary>
+    /// 根据租约状态同步房源状态。
+    /// ACTIVE 对应 OCCUPIED；租约结束、终止或取消后，只有没有其他 ACTIVE 租约时才恢复 AVAILABLE。
+    /// </summary>
+    private async Task UpdateUnitStatusForStatusChangeAsync(long unitId, string status, long tenancyId, CancellationToken ct)
+    {
+        var unit = await _db.Units.FirstOrDefaultAsync(x => x.UnitId == unitId, ct);
+        if (unit is null) return;
+
+        if (status == "ACTIVE")
+        {
+            unit.Status = "OCCUPIED";
+        }
+        else if (status is "ENDED" or "TERMINATED" or "CANCELLED")
+        {
+            var hasOtherActiveTenancy = await _db.Tenancies.AnyAsync(
+                x => x.UnitId == unitId && x.TenancyId != tenancyId && x.Status == "ACTIVE", ct);
+            if (!hasOtherActiveTenancy)
+                unit.Status = "AVAILABLE";
+        }
+
         unit.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync(ct);
     }
