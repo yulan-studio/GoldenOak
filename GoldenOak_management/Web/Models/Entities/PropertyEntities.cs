@@ -32,3 +32,87 @@ public class UnitOwner { [Key, Column("unit_owner_id")] public long UnitOwnerId 
 
 [Table("property_manager_assignments")]
 public class PropertyManagerAssignment { [Key, Column("assignment_id")] public long AssignmentId { get; set; } [Column("property_manager_id")] public long PropertyManagerId { get; set; } [Column("unit_id")] public long? UnitId { get; set; } [Column("building_id")] public long BuildingId { get; set; } [Column("assigned_from")] public DateOnly AssignedFrom { get; set; } [Column("assigned_to")] public DateOnly? AssignedTo { get; set; } [Required, MaxLength(20), Column("status")] public string Status { get; set; } = "ACTIVE"; [Column("created_at")] public DateTime CreatedAt { get; set; } public ApplicationUser PropertyManager { get; set; } = null!; public Building Building { get; set; } = null!; public Unit? Unit { get; set; } }
+
+[Table("tenancies")]
+public class Tenancy
+{
+    [Key, Column("tenancy_id")]
+    public long TenancyId { get; set; }
+
+    [Column("unit_id")]
+    public long UnitId { get; set; }
+
+    [Column("lease_start_date")]
+    public DateOnly LeaseStartDate { get; set; }
+
+    [Column("lease_end_date")]
+    public DateOnly LeaseEndDate { get; set; }
+
+    [Column("monthly_rent", TypeName = "decimal(14,2)")]
+    public decimal MonthlyRent { get; set; }
+
+    [Column("deposit_amount", TypeName = "decimal(14,2)")]
+    public decimal DepositAmount { get; set; }
+
+    [Column("deposit_received_date")]
+    public DateOnly? DepositReceivedDate { get; set; }
+
+    [Required, MaxLength(20), Column("status")]
+    public string Status { get; set; } = "PENDING";
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+
+    [Column("updated_at")]
+    public DateTime UpdatedAt { get; set; }
+
+    public Unit Unit { get; set; } = null!;
+    public ICollection<TenancyRenter> Renters { get; set; } = new List<TenancyRenter>();
+    public Lease? Lease { get; set; }
+}
+
+[Table("tenancy_renters")]
+public class TenancyRenter
+{
+    [Column("tenancy_id")]
+    public long TenancyId { get; set; }
+
+    [Column("renter_id")]
+    public long RenterId { get; set; }
+
+    [Column("is_primary")]
+    public bool IsPrimary { get; set; }
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+
+    public Tenancy Tenancy { get; set; } = null!;
+    public ApplicationUser Renter { get; set; } = null!;
+}
+
+[Table("leases")]
+public class Lease
+{
+    [Key, Column("lease_id")]
+    public long LeaseId { get; set; }
+
+    [Column("tenancy_id")]
+    public long TenancyId { get; set; }
+
+    [Column("lease_form_data", TypeName = "json")]
+    public string LeaseFormData { get; set; } = "{}";
+
+    [Column("signed_document_id")]
+    public long? SignedDocumentId { get; set; }
+
+    [Column("signed_at")]
+    public DateTime? SignedAt { get; set; }
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; }
+
+    [Column("updated_at")]
+    public DateTime UpdatedAt { get; set; }
+
+    public Tenancy Tenancy { get; set; } = null!;
+}

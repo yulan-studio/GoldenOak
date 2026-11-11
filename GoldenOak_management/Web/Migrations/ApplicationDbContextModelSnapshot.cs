@@ -167,7 +167,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("admin_profiles", (string)null);
+                    b.ToTable("admin_profiles");
                 });
 
             modelBuilder.Entity("Web.Models.ApplicationRole", b =>
@@ -348,7 +348,7 @@ namespace Web.Migrations
 
                     b.HasKey("BuildingId");
 
-                    b.ToTable("buildings", (string)null);
+                    b.ToTable("buildings");
                 });
 
             modelBuilder.Entity("Web.Models.ContractorProfile", b =>
@@ -428,7 +428,49 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("contractor_profiles", (string)null);
+                    b.ToTable("contractor_profiles");
+                });
+
+            modelBuilder.Entity("Web.Models.Lease", b =>
+                {
+                    b.Property<long>("LeaseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("lease_id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("LeaseId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("LeaseFormData")
+                        .IsRequired()
+                        .HasColumnType("json")
+                        .HasColumnName("lease_form_data");
+
+                    b.Property<DateTime?>("SignedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("signed_at");
+
+                    b.Property<long?>("SignedDocumentId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("signed_document_id");
+
+                    b.Property<long>("TenancyId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenancy_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("LeaseId");
+
+                    b.HasIndex("TenancyId")
+                        .IsUnique();
+
+                    b.ToTable("leases");
                 });
 
             modelBuilder.Entity("Web.Models.OwnerProfile", b =>
@@ -439,10 +481,6 @@ namespace Web.Migrations
                         .HasColumnName("owner_profile_id");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("OwnerProfileId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
 
                     b.Property<string>("AccountHolderName")
                         .HasMaxLength(150)
@@ -458,6 +496,10 @@ namespace Web.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("varchar(150)")
                         .HasColumnName("bank_name");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -495,7 +537,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("owner_profiles", (string)null);
+                    b.ToTable("owner_profiles");
                 });
 
             modelBuilder.Entity("Web.Models.PropertyManagerAssignment", b =>
@@ -545,7 +587,7 @@ namespace Web.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("property_manager_assignments", (string)null);
+                    b.ToTable("property_manager_assignments");
                 });
 
             modelBuilder.Entity("Web.Models.PropertyManagerProfile", b =>
@@ -603,7 +645,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("property_manager_profiles", (string)null);
+                    b.ToTable("property_manager_profiles");
                 });
 
             modelBuilder.Entity("Web.Models.RealtorProfile", b =>
@@ -667,7 +709,7 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("realtor_profiles", (string)null);
+                    b.ToTable("realtor_profiles");
                 });
 
             modelBuilder.Entity("Web.Models.RenterProfile", b =>
@@ -720,7 +762,86 @@ namespace Web.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("renter_profiles", (string)null);
+                    b.ToTable("renter_profiles");
+                });
+
+            modelBuilder.Entity("Web.Models.Tenancy", b =>
+                {
+                    b.Property<long>("TenancyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenancy_id");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("TenancyId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<decimal>("DepositAmount")
+                        .HasColumnType("decimal(14,2)")
+                        .HasColumnName("deposit_amount");
+
+                    b.Property<DateOnly?>("DepositReceivedDate")
+                        .HasColumnType("date")
+                        .HasColumnName("deposit_received_date");
+
+                    b.Property<DateOnly>("LeaseEndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("lease_end_date");
+
+                    b.Property<DateOnly>("LeaseStartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("lease_start_date");
+
+                    b.Property<decimal>("MonthlyRent")
+                        .HasColumnType("decimal(14,2)")
+                        .HasColumnName("monthly_rent");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("status");
+
+                    b.Property<long>("UnitId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("unit_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("TenancyId");
+
+                    b.HasIndex("UnitId");
+
+                    b.ToTable("tenancies");
+                });
+
+            modelBuilder.Entity("Web.Models.TenancyRenter", b =>
+                {
+                    b.Property<long>("TenancyId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("tenancy_id");
+
+                    b.Property<long>("RenterId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("renter_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_primary");
+
+                    b.HasKey("TenancyId", "RenterId");
+
+                    b.HasIndex("RenterId");
+
+                    b.ToTable("tenancy_renters");
                 });
 
             modelBuilder.Entity("Web.Models.Unit", b =>
@@ -777,7 +898,7 @@ namespace Web.Migrations
                     b.HasIndex("BuildingId", "UnitNumber")
                         .IsUnique();
 
-                    b.ToTable("units", (string)null);
+                    b.ToTable("units");
                 });
 
             modelBuilder.Entity("Web.Models.UnitOwner", b =>
@@ -827,7 +948,7 @@ namespace Web.Migrations
 
                     b.HasIndex("UnitId");
 
-                    b.ToTable("unit_owners", (string)null);
+                    b.ToTable("unit_owners");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -903,6 +1024,17 @@ namespace Web.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Web.Models.Lease", b =>
+                {
+                    b.HasOne("Web.Models.Tenancy", "Tenancy")
+                        .WithOne("Lease")
+                        .HasForeignKey("Web.Models.Lease", "TenancyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Tenancy");
+                });
+
             modelBuilder.Entity("Web.Models.OwnerProfile", b =>
                 {
                     b.HasOne("Web.Models.ApplicationUser", "User")
@@ -973,6 +1105,36 @@ namespace Web.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Web.Models.Tenancy", b =>
+                {
+                    b.HasOne("Web.Models.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("Web.Models.TenancyRenter", b =>
+                {
+                    b.HasOne("Web.Models.ApplicationUser", "Renter")
+                        .WithMany()
+                        .HasForeignKey("RenterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Web.Models.Tenancy", "Tenancy")
+                        .WithMany("Renters")
+                        .HasForeignKey("TenancyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Renter");
+
+                    b.Navigation("Tenancy");
+                });
+
             modelBuilder.Entity("Web.Models.Unit", b =>
                 {
                     b.HasOne("Web.Models.Building", "Building")
@@ -1006,6 +1168,13 @@ namespace Web.Migrations
             modelBuilder.Entity("Web.Models.Building", b =>
                 {
                     b.Navigation("Units");
+                });
+
+            modelBuilder.Entity("Web.Models.Tenancy", b =>
+                {
+                    b.Navigation("Lease");
+
+                    b.Navigation("Renters");
                 });
 #pragma warning restore 612, 618
         }

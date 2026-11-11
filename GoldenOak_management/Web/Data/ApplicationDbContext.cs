@@ -19,6 +19,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Unit> Units => Set<Unit>();
     public DbSet<UnitOwner> UnitOwners => Set<UnitOwner>();
     public DbSet<PropertyManagerAssignment> PropertyManagerAssignments => Set<PropertyManagerAssignment>();
+    public DbSet<Tenancy> Tenancies => Set<Tenancy>();
+    public DbSet<TenancyRenter> TenancyRenters => Set<TenancyRenter>();
+    public DbSet<Lease> Leases => Set<Lease>();
 
     /// <summary>
     /// 配置 Identity 表名、业务表索引和外键关系。
@@ -61,5 +64,35 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<PropertyManagerAssignment>().HasOne(x => x.PropertyManager).WithMany().HasForeignKey(x => x.PropertyManagerId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<PropertyManagerAssignment>().HasOne(x => x.Building).WithMany().HasForeignKey(x => x.BuildingId).OnDelete(DeleteBehavior.Restrict);
         builder.Entity<PropertyManagerAssignment>().HasOne(x => x.Unit).WithMany().HasForeignKey(x => x.UnitId).OnDelete(DeleteBehavior.Restrict);
+
+        // 租约关系：一个房源可以有多条历史租约，但同一时间的有效租约由业务服务控制。
+        builder.Entity<Tenancy>()
+            .HasOne(x => x.Unit)
+            .WithMany()
+            .HasForeignKey(x => x.UnitId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // 一个租约与租客是多对多关系，使用 tenancy_renters 作为关联表。
+        builder.Entity<TenancyRenter>()
+            .HasKey(x => new { x.TenancyId, x.RenterId });
+
+        builder.Entity<TenancyRenter>()
+            .HasOne(x => x.Tenancy)
+            .WithMany(x => x.Renters)
+            .HasForeignKey(x => x.TenancyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<TenancyRenter>()
+            .HasOne(x => x.Renter)
+            .WithMany()
+            .HasForeignKey(x => x.RenterId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // 一个 tenancy 最多对应一份正式 lease。
+        builder.Entity<Lease>()
+            .HasOne(x => x.Tenancy)
+            .WithOne(x => x.Lease)
+            .HasForeignKey<Lease>(x => x.TenancyId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
