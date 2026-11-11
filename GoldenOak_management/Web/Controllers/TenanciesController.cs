@@ -34,22 +34,36 @@ public sealed class TenanciesController(
 
     [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
     [HttpGet]
-    public IActionResult Create() => View(new Tenancy
+    public IActionResult Create() => View(new CreateTenancyViewModel
     {
-        Status = "PENDING",
         LeaseStartDate = DateOnly.FromDateTime(DateTime.Today),
         LeaseEndDate = DateOnly.FromDateTime(DateTime.Today).AddYears(1)
     });
 
     [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(Tenancy model, CancellationToken ct)
+    public async Task<IActionResult> Create(CreateTenancyViewModel model, CancellationToken ct)
     {
         if (!ModelState.IsValid) return View(model);
-        var id = await service.CreateTenancyAsync(model, ct);
+        var id = await service.CreateTenancyAsync(new Tenancy
+        {
+            UnitId = model.UnitId,
+            LeaseStartDate = model.LeaseStartDate,
+            LeaseEndDate = model.LeaseEndDate,
+            MonthlyRent = model.MonthlyRent,
+            DepositAmount = model.DepositAmount,
+            DepositReceivedDate = model.DepositReceivedDate,
+            Status = "PENDING"
+        }, ct);
         if (id == 0)
         {
             ModelState.AddModelError(string.Empty, "无法创建租约：请检查日期、金额、房源以及是否已有 ACTIVE 租约。");
+            return View(model);
+        }
+
+        if (model.PrimaryRenterId > 0 && !await service.AddRenterAsync(id, model.PrimaryRenterId, true, ct))
+        {
+            ModelState.AddModelError(nameof(model.PrimaryRenterId), "租客不存在，租约已创建但未添加主租客。");
             return View(model);
         }
         return RedirectToAction(nameof(Details), new { id });
@@ -60,16 +74,34 @@ public sealed class TenanciesController(
     public async Task<IActionResult> Edit(long id, CancellationToken ct)
     {
         var item = await service.GetTenancyAsync(id, ct);
-        return item is null ? NotFound() : View(item);
+        return item is null ? NotFound() : View(new EditTenancyViewModel
+        {
+            TenancyId = item.TenancyId,
+            UnitId = item.UnitId,
+            LeaseStartDate = item.LeaseStartDate,
+            LeaseEndDate = item.LeaseEndDate,
+            MonthlyRent = item.MonthlyRent,
+            DepositAmount = item.DepositAmount,
+            DepositReceivedDate = item.DepositReceivedDate
+        });
     }
 
     [Authorize(Roles = "ADMIN,PROPERTY_MANAGER")]
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(long id, Tenancy model, CancellationToken ct)
+    public async Task<IActionResult> Edit(long id, EditTenancyViewModel model, CancellationToken ct)
     {
         if (id != model.TenancyId) return BadRequest();
         if (!ModelState.IsValid) return View(model);
-        if (!await service.UpdateTenancyAsync(model, ct))
+        if (!await service.UpdateTenancyAsync(new Tenancy
+        {
+            TenancyId = model.TenancyId,
+            UnitId = model.UnitId,
+            LeaseStartDate = model.LeaseStartDate,
+            LeaseEndDate = model.LeaseEndDate,
+            MonthlyRent = model.MonthlyRent,
+            DepositAmount = model.DepositAmount,
+            DepositReceivedDate = model.DepositReceivedDate
+        }, ct))
         {
             ModelState.AddModelError(string.Empty, "无法更新租约：请检查日期、金额、房源以及 ACTIVE 租约冲突。");
             return View(model);
