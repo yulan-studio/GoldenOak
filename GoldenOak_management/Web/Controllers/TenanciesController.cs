@@ -36,6 +36,12 @@ public sealed class TenanciesController(
         ViewBag.RenterProfiles = await db.RenterProfiles.AsNoTracking()
             .Where(x => item.Renters.Select(r => r.RenterId).Contains(x.UserId))
             .ToDictionaryAsync(x => x.UserId, ct);
+        ViewBag.UnitOwners = await (from relation in db.UnitOwners.AsNoTracking()
+                                    join profile in db.OwnerProfiles.AsNoTracking() on relation.OwnerId equals profile.UserId
+                                    join user in db.Users.AsNoTracking() on profile.UserId equals user.Id
+                                    where relation.UnitId == item.UnitId
+                                    orderby profile.FullName
+                                    select new OwnerSummaryViewModel { OwnerId = relation.OwnerId, FullName = profile.FullName, Email = user.Email, PhoneNumber = user.PhoneNumber, OwnershipPercentage = relation.OwnershipPercentage, IsPrimaryPayoutOwner = relation.IsPrimaryPayoutOwner }).ToListAsync(ct);
         return View(item);
     }
 

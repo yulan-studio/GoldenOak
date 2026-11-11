@@ -1,0 +1,2 @@
+@model IEnumerable<Web.Models.OwnerSummaryViewModel>
+<section id="owner-info" class="go-panel mt-4"><h2>业主信息</h2><div class="table-responsive"><table class="go-table"><thead><tr><th>业主 ID</th><th>业主姓名</th><th>电话号码</th><th>Email</th><th>产权比例</th><th>主要收款业主</th></tr></thead><tbody>@foreach (var owner in Model) { <tr><td>@owner.OwnerId</td><td>@owner.FullName</td><td>@(owner.PhoneNumber ?? "—")</td><td>@(owner.Email ?? "—")</td><td>@owner.OwnershipPercentage.ToString("0.##")%</td><td>@(owner.IsPrimaryPayoutOwner ? "是" : "否")</td></tr> }</tbody></table></div></section>

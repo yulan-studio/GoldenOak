@@ -100,7 +100,10 @@ button, input, select, textarea { font: inherit; }
 .go-card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-bottom: 22px; }
 .go-panel-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; }
 .go-panel-title { margin: 0 0 16px; font-size: 15px; font-weight: 700; }
-.go-panel h2 { margin: 24px 0 16px; padding-top: 18px; border-top: 1px solid var(--go-line); color: var(--go-ink); font-size: 15px; font-weight: 700; }
+.go-panel h2 { margin: 24px 0 16px; padding-top: 24px; border-top: 1px solid var(--go-line); color: var(--go-ink); font-size: 15px; font-weight: 700; }
+.go-page-header + .go-panel { background: #f1f8f4; }
+.go-panel#owner-info h2 { padding-top: 0; border-top: 0; }
+.go-form-grid label:has(input[name="IsPrimaryPayoutOwner"]) { display: flex; align-items: center; gap: 8px; padding-top: 28px; }
 .go-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 42px; padding: 0 15px; color: #fff; background: var(--go-green); border: 0; border-radius: 7px; font-weight: 650; line-height: 1; text-decoration: none; }
 .go-btn-primary:hover { color: #fff; background: var(--go-green-2); }
 .go-btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 42px; padding: 0 15px; color: var(--go-green); background: #e4f3eb; border: 1px solid #c6e5d5; border-radius: 7px; font-weight: 650; line-height: 1; text-decoration: none; }
